@@ -11,12 +11,6 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Example {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Blueprint {
   id          String   @id @default(cuid())
   name        String
@@ -30,4 +24,8 @@ model Blueprint {
   comments    String
   companyName String
   companyLogo String
+  hasOmni     Boolean  @default(false)
+  hasVoice    Boolean  @default(false)
+  hasIntegra  Boolean  @default(false)
+  @@index([authorId])
 }
