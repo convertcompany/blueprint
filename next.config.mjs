@@ -15,8 +15,24 @@ const config = {
    * @see https://github.com/vercel/next.js/issues/41980
    */
   i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
+    locales: ["pt-BR"],
+    defaultLocale: "pt-BR",
+  },
+  images: {
+    remotePatterns : [
+      {
+        protocol: "https",
+        hostname: "www.gravatar.com",
+        pathname: "**",
+        port: "",
+      },
+      {
+        protocol: "https",
+        hostname: "images.clerk.dev",
+        pathname: "**",
+        port: "",
+      }
+    ]
   },
 };
 export default config;
