@@ -22,16 +22,10 @@ const config = {
     remotePatterns : [
       {
         protocol: "https",
-        hostname: "www.gravatar.com",
+        hostname: "**",
         pathname: "**",
         port: "",
       },
-      {
-        protocol: "https",
-        hostname: "images.clerk.dev",
-        pathname: "**",
-        port: "",
-      }
     ]
   },
 };
