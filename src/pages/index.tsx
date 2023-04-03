@@ -3,8 +3,8 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
-dayjs.locale("pt-br");
 import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.locale("pt-br");
 dayjs.extend(relativeTime);
 import { IoMdAddCircle } from "react-icons/io";
 
@@ -16,13 +16,6 @@ type BlueprintProps = RouterOutputs["blueprints"]["getAll"][number];
 const Home: NextPage = () => {
   const user = useUser();
   const { data, isLoading } = api.blueprints.getAll.useQuery();
-  const { mutate } = api.blueprints.create.useMutation();
-
-  const createBlueprint = () => {
-    const blueprint = mutate({ name: "Novo Projeto", description: "Descrição do projeto" });
-    window.location.reload();
-    return blueprint;
-  };
 
   return (
     <>
@@ -64,22 +57,11 @@ const Home: NextPage = () => {
                     <Image alt="Icone" width={60} height={60} src={"/logos/icon.svg"} className="mb-6 grayscale" />
                     <h2 className="text-2xl font-semibold">Nenhum Blueprint encontrado</h2>
                     <p className="text-sm text-slate-500">Clique no botão abaixo para criar um novo projeto</p>
-                    <button onClick={createBlueprint} className="mt-6 inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white antialiased hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
-                      Novo Blueprint
-                    </button>
+                    <button className="mt-6 inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white antialiased hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">Novo Blueprint</button>
                   </div>
                 ) : (
                   <>
-                    <div onClick={createBlueprint} className="relative flex select-none items-center gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 antialiased shadow-sm outline-none ring-blue-500 ring-offset-2 transition-all hover:shadow-md focus-visible:ring-2 active:shadow-none" tabIndex={0}>
-                      <div className="relative">
-                        <Image alt="Icone" width={24} height={24} src={"/logos/icon.svg"} className="grayscale" />
-                        <IoMdAddCircle className="text-md absolute left-4 top-3 rounded-full bg-white text-blue-500" />
-                      </div>
-                      <div>
-                        <span className="text-base font-semibold">Novo Blueprint</span>
-                        <p className="text-sm text-slate-500">Clique aqui para criar um novo projeto</p>
-                      </div>
-                    </div>
+                    <CreateBlueprintButton />
                     <div className="grid grid-cols-1 gap-6 transition-all sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                       {data?.map((blueprint: BlueprintProps) => (
                         <BlueprintCard {...blueprint} key={blueprint?.id} />
@@ -96,10 +78,43 @@ const Home: NextPage = () => {
   );
 };
 
+const CreateBlueprintButton = () => {
+  const { mutate } = api.blueprints.create.useMutation();
+
+  const createBlueprint = () => {
+    const blueprint = mutate({ name: "Novo Projeto", description: "Descrição do projeto" });
+    window.location.reload();
+    return blueprint;
+  };
+
+  return (
+    <div onClick={createBlueprint} className="relative flex select-none items-center gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 antialiased shadow-sm outline-none ring-blue-500 ring-offset-2 transition-all hover:shadow-md focus-visible:ring-2 active:shadow-none" tabIndex={0}>
+      <div className="relative">
+        <Image alt="Icone" width={24} height={24} src={"/logos/icon.svg"} className="grayscale" />
+        <IoMdAddCircle className="text-md absolute left-4 top-3 rounded-full bg-white text-blue-500" />
+      </div>
+      <div>
+        <span className="text-base font-semibold">Novo Blueprint</span>
+        <p className="text-sm text-slate-500">Clique aqui para criar um novo projeto</p>
+      </div>
+    </div>
+  );
+};
+
+const DeleteBlueprintButton = ({ id }: { id: string }) => {
+  const { mutate } = api.blueprints.delete.useMutation();
+  const deleteBlueprint = () => {
+    mutate({ id });
+    window.location.reload();
+  };
+  return <div onClick={deleteBlueprint} tabIndex={0}></div>;
+};
+
 const BlueprintCard = (blueprint: BlueprintProps) => {
   return (
     <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm outline-none ring-blue-500 ring-offset-2 transition-all hover:shadow-md focus-visible:ring-2 active:shadow-none" tabIndex={0}>
       <Image src={"/teste.png"} width={1000} height={80} alt={"teste"} />
+      <DeleteBlueprintButton id={blueprint.id} />
       <div className="border-t p-3 pt-2">
         <span className="text-base font-semibold">{blueprint.name}</span>
         <p className="text-sm text-slate-500">{blueprint.description}</p>
