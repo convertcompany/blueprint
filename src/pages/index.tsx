@@ -8,7 +8,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 import { IoMdAddCircle } from "react-icons/io";
 
-import { api, RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
 import Image from "next/image";
 
 type BlueprintProps = RouterOutputs["blueprints"]["getAll"][number];
@@ -17,9 +18,10 @@ const Home: NextPage = () => {
   const { data, isLoading } = api.blueprints.getAll.useQuery();
   const { mutate } = api.blueprints.create.useMutation();
 
-  const createBlueprint = async () => {
-    const blueprint = await mutate({ name: "Novo Projeto", description: "Descrição do projeto" });
+  const createBlueprint = () => {
+    const blueprint = mutate({ name: "Novo Projeto", description: "Descrição do projeto" });
     window.location.reload();
+    return blueprint;
   };
 
   return (
