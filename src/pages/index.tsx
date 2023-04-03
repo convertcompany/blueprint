@@ -19,7 +19,7 @@ const Home: NextPage = () => {
 
   const createBlueprint = async () => {
     const blueprint = await mutate({ name: "Novo Projeto", description: "Descrição do projeto" });
-    console.log(blueprint);
+    window.location.reload();
   };
 
   return (
