@@ -26,7 +26,7 @@ const Home: NextPage = () => {
           <h1 className="text-xl font-bold text-slate grow">Blueprints</h1>
           <div className="flex items-center gap-2">
             <Image alt="Imagem" src={user?.user?.profileImageUrl ?? ""} className="rounded-full" width={25} height={25}/>
-            <div className="flex flex-col items-start h">
+            <div className="flex flex-col items-start">
               <span className="font-semibold">{user.user?.fullName}</span>
               <SignOutButton>Sair</SignOutButton>
             </div>

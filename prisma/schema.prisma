@@ -19,11 +19,11 @@ model Blueprint {
   updatedAt   DateTime @updatedAt
   authorId    String
   layout      Json     @default("{}")
-  externalURL String
-  externalId  String
-  comments    String
-  companyName String
-  companyLogo String
+  externalURL String   @default("")
+  externalId  String   @default("")
+  comments    String   @default("")
+  companyName String   @default("")
+  companyLogo String   @default("")
   hasOmni     Boolean  @default(false)
   hasVoice    Boolean  @default(false)
   hasIntegra  Boolean  @default(false)

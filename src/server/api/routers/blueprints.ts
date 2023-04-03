@@ -1,6 +1,7 @@
 import type { User } from "@clerk/nextjs/dist/api";
 import { clerkClient } from "@clerk/nextjs/server";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, privateProcedure, publicProcedure } from "~/server/api/trpc";
+import { z } from "zod"
 
 const filterUserForClient = (user: User) => {
   return {
@@ -12,9 +13,12 @@ const filterUserForClient = (user: User) => {
 };
 
 export const blueprintsRouter = createTRPCRouter({
-  getAll: publicProcedure.query( async ({ ctx }) => {
+  getAll: privateProcedure.query( async ({ ctx }) => {
     const blueprints = await ctx.prisma.blueprint.findMany({
       take : 100,
+      where : {
+        authorId : ctx.userId
+      }
     });
     
     const users = ( await clerkClient.users.getUserList({
@@ -31,4 +35,21 @@ export const blueprintsRouter = createTRPCRouter({
       }
     });
   }),
+  
+  create: privateProcedure 
+    .input(z.object({
+      name : z.string(),
+      description : z.string(),
+    }))
+    .mutation( async ({ ctx, input }) => {
+      const authorId = ctx.userId;
+      const blueprint = await ctx.prisma.blueprint.create({
+        data : {
+          authorId,
+          name : input.name,
+          description : input.description,
+        }
+      })
+      return blueprint;
+    })
 });
