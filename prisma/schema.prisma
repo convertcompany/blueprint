@@ -28,4 +28,6 @@ model Blueprint {
   externalURL String
   externalId  String
   comments    String
+  companyName String
+  companyLogo String
 }
