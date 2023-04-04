@@ -11,24 +11,28 @@ export default {
     return [
       {
         label: "Titulo 1",
+        type: "heading",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
           editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
         },
       },
       {
         label: "Titulo 2",
+        type: "heading",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
           editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
         },
       },
       {
         label: "Titulo 3",
+        type: "heading",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
           editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
         },
       },
       {
         label: "Tarefas",
+        type: "todo",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
           editor.commands.deleteRange(range);
           editor.commands.toggleTaskList();
@@ -36,6 +40,7 @@ export default {
       },
       {
         label: "Lista Ordenada",
+        type: "ordered",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
           editor.commands.deleteRange(range);
           editor.commands.toggleOrderedList();
@@ -43,6 +48,7 @@ export default {
       },
       {
         label: "Lista Circular",
+        type: "unordered",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
           editor.commands.deleteRange(range);
           editor.commands.toggleBulletList();
@@ -50,12 +56,13 @@ export default {
       },
       {
         label: "Código",
+        type: "code",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
           editor.commands.deleteRange(range);
           editor.commands.toggleCodeBlock();
         },
       },
-    ];
+    ].filter((item) => item.label.toLowerCase().includes(query.toLowerCase()));
   },
 
   render: () => {

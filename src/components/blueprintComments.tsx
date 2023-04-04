@@ -68,17 +68,17 @@ const BlueprintComments = () => {
         suggestion,
       }),
     ],
-    content: "<h1>Novo Projeto</h1>",
+    content: "",
     editorProps: {
       attributes: {
-        class: "prose w-full h-full focus:outline-none p-6 antialiased bg-slate-50/50",
+        class: "prose w-full h-full focus:outline-none p-6 antialiased pt-2",
       },
     },
   });
 
   return (
     <>
-      <EditorContent editor={editor} className="blueprint-comments h-full" />
+      <EditorContent editor={editor} className="blueprint-comments grow" />
     </>
   );
 };

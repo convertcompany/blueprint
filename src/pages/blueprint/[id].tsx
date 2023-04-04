@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { CgArrowsExpandRight, CgClose, CgNotes } from "react-icons/cg";
+import { CgArrowsExpandRight, CgClose, CgComment } from "react-icons/cg";
 import superjson from "superjson";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
@@ -21,7 +21,7 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
       <Head>
         <title>Editando | {data?.name}</title>
       </Head>
-      <main className="flex h-screen flex-col">
+      <main className="flex h-screen max-h-screen flex-col overflow-hidden">
         <nav className="flex items-center gap-6 border-b p-8 py-4 antialiased shadow-sm">
           <div className="flex grow flex-row items-center gap-4">
             <Link href={"/"}>
@@ -33,16 +33,19 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
             </div>
           </div>
         </nav>
-        <div className="flex grow">
-          <div className="flex grow flex-col border-r p-4">
-            <span>Ola</span>
-          </div>
-          <div className="flex w-[400px] flex-col antialiased">
-            <div className="flex items-center gap-2 border-b p-4 shadow-sm">
-              <CgNotes />
-              <label className="grow font-semibold">Notas</label>
-              <CgArrowsExpandRight size={20} />
-              <CgClose size={24} />
+        <div className="flex grow flex-row">
+          <div className="flex grow flex-col border-r"></div>
+          <div className="flex max-h-screen w-[400px] flex-col bg-slate-50/50">
+            <div className="flex items-center px-6 pt-4 text-slate-400">
+              <span className="flex grow items-center gap-2 text-xs">
+                <CgComment /> Comentários sobre o Projeto
+              </span>
+              <div className="font-regular grid h-9 w-9 cursor-pointer select-none place-items-center rounded-full text-xl hover:bg-slate-200">
+                <CgArrowsExpandRight />
+              </div>
+              <div className="font-regular grid h-9 w-9 cursor-pointer select-none place-items-center rounded-full text-2xl hover:bg-slate-200">
+                <CgClose className="" />
+              </div>
             </div>
             <BlueprintComments />
           </div>

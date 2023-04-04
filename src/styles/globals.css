@@ -3,6 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.blueprint-comments * {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
 .blueprint-comments :is(ul, ol) {
     list-style: disc;
     padding-left: 1.5rem;
@@ -206,28 +210,25 @@ input[type="checkbox"]:checked::after {
 }
 
 .items {
-    background: #fff;
-    border-radius: 0.5rem;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0px 10px 20px rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.8);
-    font-size: 0.9rem;
-    overflow: hidden;
-    padding: 0.2rem;
-    position: relative;
+    @apply bg-white shadow-md border border-slate-200 rounded-xl p-2;
+    outline: none;
+    min-width: 220px;
 }
 
 .item {
     background: transparent;
     border: 1px solid transparent;
     border-radius: 0.4rem;
-    display: block;
-    margin: 0;
+    display: flex;
     padding: 0.2rem 0.4rem;
     text-align: left;
     width: 100%;
-
+    font-weight: 500;
+    font-size: 0.875rem;
+    align-items: center;
+    gap: 0.8rem;
 }
 
 .item.is-selected {
-    border-color: #000;
+    @apply bg-slate-50 border border-slate-200;
 }

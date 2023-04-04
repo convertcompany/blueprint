@@ -1,5 +1,6 @@
 import { SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { TbCheckbox, TbCode, TbHeading, TbList, TbListNumbers } from "react-icons/tb";
 
 export default forwardRef((props: SuggestionProps, ref) => {
   const { editor, range } = props;
@@ -53,11 +54,12 @@ export default forwardRef((props: SuggestionProps, ref) => {
       {props.items.length ? (
         props.items.map((item, index) => (
           <button className={`item ${index === selectedIndex ? "is-selected" : ""}`} key={index} onClick={() => selectItem(index)}>
+            <div className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-slate-100 text-slate-400">{item.type === "heading" ? <TbHeading /> : item.type === "todo" ? <TbCheckbox /> : item.type === "ordered" ? <TbListNumbers /> : item.type === "unordered" ? <TbList /> : item.type === "code" ? <TbCode /> : null}</div>
             {item.label}
           </button>
         ))
       ) : (
-        <div className="item">No result</div>
+        <div className="item">Nenhum comando encontrado...</div>
       )}
     </div>
   );
