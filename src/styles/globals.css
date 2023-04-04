@@ -37,31 +37,19 @@
 .blueprint-comments h1 {
     font-size: 1.3rem;
     font-weight: 700;
+    color: #2f3137;
 }
 
 .blueprint-comments h2 {
     font-size: 1.2rem;
     font-weight: 700;
+    color: #2f3137;
 }
 
 .blueprint-comments h3 {
     font-size: 1.1rem;
     font-weight: 700;
-}
-
-.blueprint-comments h4 {
-    font-size: 1rem;
-    font-weight: 700;
-}
-
-.blueprint-comments h5 {
-    font-size: 0.9rem;
-    font-weight: 700;
-}
-
-.blueprint-comments h6 {
-    font-size: 0.8rem;
-    font-weight: 700;
+    color: #2f3137;
 }
 
 .blueprint-comments pre {
@@ -77,6 +65,7 @@
 
 .blueprint-comments p {
     font-size: 0.875rem;
+    color: #2f3137;
 }
 
 .blueprint-comments p.is-empty::before {

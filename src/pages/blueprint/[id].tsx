@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CgArrowsExpandRight, CgClose, CgComment } from "react-icons/cg";
 import superjson from "superjson";
+import BlueprintEditor from "~/components/blueprintEditor";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
@@ -34,7 +35,9 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
           </div>
         </nav>
         <div className="flex grow flex-row">
-          <div className="flex grow flex-col border-r"></div>
+          <div className="flex grow flex-col border-r">
+            <BlueprintEditor />
+          </div>
           <div className="flex max-h-screen w-[400px] flex-col bg-slate-50/50">
             <div className="flex items-center px-6 pt-4 text-slate-400">
               <span className="flex grow items-center gap-2 text-xs">
