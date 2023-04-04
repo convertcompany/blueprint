@@ -28,6 +28,6 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs"
-  ],
+, "src/server/api/hocuspocus-server.js", "src/server/api/hocuspocus-server.js"  ],
   "exclude": ["node_modules"]
 }
