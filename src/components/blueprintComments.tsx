@@ -5,22 +5,14 @@ import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import Placeholder from "@tiptap/extension-placeholder";
 import Collaboration from "@tiptap/extension-collaboration";
-import { WebrtcProvider } from "y-webrtc";
 import * as Y from "yjs";
-import { useEffect } from "react";
+import { WebrtcProvider } from "y-webrtc";
+
+const ydoc = new Y.Doc();
+//eslint-disable-next-line
+const provider = new WebrtcProvider("tiptap-collaboration-extension-convert", ydoc);
 
 const BlueprintComments = () => {
-  useEffect(() => {
-    console.log("criando");
-    const ydoc = new Y.Doc();
-    const provider = new WebrtcProvider("blueprint-comments", ydoc);
-    // provider.destroy();
-    const type = ydoc.getText("comments");
-    type.observe((event) => {
-      console.log(event);
-    });
-  }, []);
-
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -28,6 +20,9 @@ const BlueprintComments = () => {
       Color,
       Placeholder.configure({
         placeholder: "Digite / para ver os comandos",
+      }),
+      Collaboration.configure({
+        document: ydoc,
       }),
     ],
     content: "<h1>Novo Projeto</h1>",

@@ -1,13 +1,16 @@
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import type { GetStaticProps, NextPage } from "next";
+import dynamic from "next/dynamic";
+
 import Head from "next/head";
 import { appRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
 import { prisma } from "~/server/db";
 import superjson from "superjson";
 import Image from "next/image";
-import BlueprintComments from "~/components/blueprintComments";
 import { CgArrowsExpandRight, CgClose, CgNotes } from "react-icons/cg";
+
+const BlueprintComments = dynamic(() => import("~/components/blueprintComments"), { ssr: false });
 
 /** Pagina aonde o usuário edita o blueprint */
 const Blueprint: NextPage<{ id: string }> = ({ id }) => {

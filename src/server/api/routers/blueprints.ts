@@ -16,9 +16,9 @@ export const blueprintsRouter = createTRPCRouter({
   getAll: privateProcedure.query(async ({ ctx }) => {
     const blueprints = await ctx.prisma.blueprint.findMany({
       take: 100,
-      where: {
-        authorId: ctx.userId,
-      },
+      // where: {
+      //   authorId: ctx.userId,
+      // },
     });
 
     const users = (
