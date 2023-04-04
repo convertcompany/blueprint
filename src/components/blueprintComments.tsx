@@ -12,7 +12,7 @@ import { useUser } from "@clerk/nextjs";
 
 const ydoc = new Y.Doc();
 const provider = new HocuspocusProvider({
-  url: "ws://blueprint-beta.vercel.app:1234",
+  url: "wss://blueprint-beta.vercel.app:1234",
   document: ydoc,
   name: "user",
   forceSyncInterval: 200,
