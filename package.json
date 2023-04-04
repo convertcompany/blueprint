@@ -38,6 +38,7 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
     "superjson": "1.12.2",
+    "tippy.js": "^6.3.7",
     "ws": "^8.13.0",
     "y-prosemirror": "^1.2.1",
     "y-webrtc": "^10.2.5",

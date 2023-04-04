@@ -1,77 +1,115 @@
-import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
+import type { CommandProps, Range } from "@tiptap/react";
+import { ReactRenderer } from "@tiptap/react";
+import tippy from "tippy.js";
+
+import { SuggestionKeyDownProps, SuggestionOptions, SuggestionProps } from "@tiptap/suggestion";
+import CommandList from "./commandList";
 
 export default {
-  items: ({ query }: SuggestionProps) => {
+  char: "/",
+  items: ({ query }: SuggestionProps | any) => {
     return [
       {
-        title: "To Dos",
-        subtitle: "Create a to do list with checkboxes",
-        command: ({ editor, range }: SuggestionProps) => {
-          editor.commands.deleteRange(range);
-          editor.commands.insertContent('<ul data-type="taskList"><li data-checked="false"><li>&#8203</li></ul>');
-        },
-      },
-      {
-        title: "Heading 1",
-        subtitle: "BIG heading",
-        command: ({ editor, range }: SuggestionProps) => {
+        label: "Titulo 1",
+        command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
           editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
         },
       },
       {
-        title: "Heading 2",
-        subtitle: "Less Big heading",
-        command: ({ editor, range }: SuggestionProps) => {
+        label: "Titulo 2",
+        command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
           editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
         },
       },
       {
-        title: "Heading 3",
-        subtitle: "Medium big heading",
-        command: ({ editor, range }: SuggestionProps) => {
+        label: "Titulo 3",
+        command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
           editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
         },
       },
       {
-        title: "Bullet List",
-        subtitle: "Pew pew pew",
-        command: ({ editor, range }: SuggestionProps) => {
+        label: "Tarefas",
+        command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
+          editor.commands.deleteRange(range);
+          editor.commands.toggleTaskList();
+        },
+      },
+      {
+        label: "Lista Ordenada",
+        command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
+          editor.commands.deleteRange(range);
+          editor.commands.toggleOrderedList();
+        },
+      },
+      {
+        label: "Lista Circular",
+        command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
           editor.commands.deleteRange(range);
           editor.commands.toggleBulletList();
         },
       },
       {
-        title: "Numbered List",
-        subtitle: "1, 2, 3, 4...",
-        command: ({ editor, range }: SuggestionProps) => {
+        label: "Código",
+        command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
           editor.commands.deleteRange(range);
-
-          editor.commands.toggleOrderedList();
+          editor.commands.toggleCodeBlock();
         },
       },
-    ]
-      .filter((item) => item.title.toLowerCase().startsWith(query.toLowerCase()))
-      .slice(0, 10);
+    ];
   },
 
   render: () => {
+    let component: any;
+    let popup: any;
+
     return {
-      onStart: (props: SuggestionProps) => {
-        if (!props) return;
-        let editor = props.editor;
-        let range = props.range;
-        // let location = props?.clientRect();
+      onStart: (props: SuggestionOptions | any) => {
+        component = new ReactRenderer(CommandList, {
+          props,
+          editor: props.editor,
+        });
+
+        if (!props.clientRect) {
+          return;
+        }
+
+        popup = tippy("body", {
+          getReferenceClientRect: props.clientRect,
+          appendTo: () => document.body,
+          content: component.element,
+          showOnCreate: true,
+          interactive: true,
+          trigger: "manual",
+          placement: "bottom-start",
+        });
       },
 
-      onUpdate(props: SuggestionProps) {},
+      onUpdate(props: SuggestionProps | any) {
+        component.updateProps(props);
+
+        if (!props.clientRect) {
+          return;
+        }
+
+        popup[0].setProps({
+          getReferenceClientRect: props.clientRect,
+        });
+      },
 
       onKeyDown(props: SuggestionKeyDownProps) {
         if (props.event.key === "Escape") {
+          popup[0].hide();
+
           return true;
         }
+
+        return component.ref?.onKeyDown(props);
       },
 
-      onExit() {},
+      onExit() {
+        popup[0].destroy();
+        component.destroy();
+      },
     };
   },
 };

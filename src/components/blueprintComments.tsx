@@ -14,6 +14,8 @@ import StarterKit from "@tiptap/starter-kit";
 
 import { useUser } from "@clerk/nextjs";
 import { HocuspocusProvider } from "@hocuspocus/provider";
+import Mention from "@tiptap/extension-mention";
+import suggestion from "./tiptap/commandSuggestion";
 
 const ydoc = new Y.Doc();
 const provider = new HocuspocusProvider({
@@ -59,6 +61,12 @@ const BlueprintComments = () => {
         nested: true,
       }),
       Link,
+      Mention.configure({
+        HTMLAttributes: {
+          class: "mention",
+        },
+        suggestion,
+      }),
     ],
     content: "<h1>Novo Projeto</h1>",
     editorProps: {
