@@ -12,15 +12,3 @@ export const appRouter = createTRPCRouter({
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
-
-/* eslint @typescript-eslint/no-var-requires: "off" */
-/* eslint @typescript-eslint/no-unsafe-assignment : "off" */
-/* eslint @typescript-eslint/no-unsafe-member-access : "off" */
-/* eslint @typescript-eslint/no-unsafe-call : "off" */
-const { Hocuspocus } = require("@hocuspocus/server");
-
-const server = new Hocuspocus({
-  port: 1234,
-});
-
-server.listen();
