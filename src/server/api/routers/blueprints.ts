@@ -38,6 +38,29 @@ export const blueprintsRouter = createTRPCRouter({
     });
   }),
 
+  getBlueprintById: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const blueprint = await ctx.prisma.blueprint.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!blueprint) {
+        throw new Error("Blueprint not found");
+      }
+      const author = await clerkClient.users.getUser(blueprint.authorId);
+      return {
+        ...blueprint,
+        author: author,
+      };
+    }),
+
   create: privateProcedure
     .input(
       z.object({

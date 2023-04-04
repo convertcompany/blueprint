@@ -11,6 +11,7 @@ import { IoMdAddCircle } from "react-icons/io";
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 import Image from "next/image";
+import Link from "next/link";
 
 type BlueprintProps = RouterOutputs["blueprints"]["getAll"][number];
 const Home: NextPage = () => {
@@ -25,7 +26,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-screen w-screen flex-col">
-        <div className="flex items-center gap-6 border-b p-8 py-4 antialiased shadow-sm">
+        <nav className="flex items-center gap-6 border-b p-8 py-4 antialiased shadow-sm">
           <div className="grow">
             <Image alt="Blueprint" src="/logos/light.svg" width={120} height={25} />
           </div>
@@ -36,7 +37,7 @@ const Home: NextPage = () => {
               <span className="font-regular text-xs leading-3 text-slate-500">{user.user?.organizationMemberships[0]?.organization?.name}</span>
             </div>
           </div>
-        </div>
+        </nav>
         <div className="flex grow bg-slate-50 p-8">
           <div className="flex grow flex-col gap-6">
             {isLoading ? (
@@ -57,7 +58,6 @@ const Home: NextPage = () => {
                     <Image alt="Icone" width={60} height={60} src={"/logos/icon.svg"} className="mb-6 grayscale" />
                     <h2 className="text-2xl font-semibold">Nenhum Blueprint encontrado</h2>
                     <p className="text-sm text-slate-500">Clique no botão abaixo para criar um novo projeto</p>
-                    <button className="mt-6 inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white antialiased hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">Novo Blueprint</button>
                   </div>
                 ) : (
                   <>
@@ -112,22 +112,24 @@ const DeleteBlueprintButton = ({ id }: { id: string }) => {
 
 const BlueprintCard = (blueprint: BlueprintProps) => {
   return (
-    <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm outline-none ring-blue-500 ring-offset-2 transition-all hover:shadow-md focus-visible:ring-2 active:shadow-none" tabIndex={0}>
-      <Image src={"/teste.png"} width={1000} height={80} alt={"teste"} />
-      <DeleteBlueprintButton id={blueprint.id} />
-      <div className="border-t p-3 pt-2">
-        <span className="text-base font-semibold">{blueprint.name}</span>
-        <p className="text-sm text-slate-500">{blueprint.description}</p>
-        {!!blueprint?.authorId && (
-          <div className="mt-2 flex items-center gap-2">
-            <Image alt="Imagem" src={blueprint?.author?.profileImageUrl ?? ""} className="rounded-full" width={20} height={20} />
-            <p className="text-xs font-medium text-slate-500 ">
-              por {blueprint.author.fullName} • {dayjs(blueprint.createdAt).fromNow()}
-            </p>
-          </div>
-        )}
+    <Link href={`/blueprint/${blueprint.id}`}>
+      <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm outline-none ring-blue-500 ring-offset-2 transition-all hover:shadow-md focus-visible:ring-2 active:shadow-none" tabIndex={0}>
+        <Image src={"/teste.png"} width={1000} height={80} alt={"teste"} />
+        <DeleteBlueprintButton id={blueprint.id} />
+        <div className="border-t p-3 pt-2">
+          <span className="text-base font-semibold">{blueprint.name}</span>
+          <p className="text-sm text-slate-500">{blueprint.description}</p>
+          {!!blueprint?.authorId && (
+            <div className="mt-2 flex items-center gap-2">
+              <Image alt="Imagem" src={blueprint?.author?.profileImageUrl ?? ""} className="rounded-full" width={20} height={20} />
+              <p className="text-xs font-medium text-slate-500 ">
+                por {blueprint.author.fullName} • {dayjs(blueprint.createdAt).fromNow()}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
