@@ -1,10 +1,12 @@
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import { AnimatePresence, motion } from "framer-motion";
 import type { GetStaticProps, NextPage } from "next";
 import dynamic from "next/dynamic";
 
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { CgArrowsExpandRight, CgClose, CgComment } from "react-icons/cg";
 import superjson from "superjson";
 import BlueprintEditor from "~/components/blueprintEditor";
@@ -16,6 +18,7 @@ const BlueprintComments = dynamic(() => import("~/components/blueprintComments")
 
 /** Pagina aonde o usuário edita o blueprint */
 const Blueprint: NextPage<{ id: string }> = ({ id }) => {
+  const [showComments, setShowComments] = useState(false);
   const { data } = api.blueprints.getBlueprintById.useQuery({ id });
   return (
     <>
@@ -29,7 +32,9 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
               <Image alt="Blueprint" src="/logos/light.svg" width={120} height={25} className="cursor-pointer" />
             </Link>
             <div className="flex flex-col border-l pl-4 leading-4">
-              <span className="text-base font-bold">{data?.name}</span>
+              <span className="text-base font-bold" onClick={() => setShowComments(!showComments)}>
+                {data?.name}
+              </span>
               <span className="text-xs font-medium text-slate-500">{data?.description}</span>
             </div>
           </div>
@@ -38,20 +43,24 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
           <div className="flex grow flex-col border-r">
             <BlueprintEditor />
           </div>
-          <div className="flex max-h-screen w-[400px] flex-col bg-slate-50/50">
-            <div className="flex items-center px-6 pt-4 text-slate-400">
-              <span className="flex grow items-center gap-2 text-xs">
-                <CgComment /> Comentários sobre o Projeto
-              </span>
-              <div className="font-regular grid h-9 w-9 cursor-pointer select-none place-items-center rounded-full text-xl hover:bg-slate-200">
-                <CgArrowsExpandRight />
-              </div>
-              <div className="font-regular grid h-9 w-9 cursor-pointer select-none place-items-center rounded-full text-2xl hover:bg-slate-200">
-                <CgClose className="" />
-              </div>
-            </div>
-            <BlueprintComments />
-          </div>
+          <AnimatePresence>
+            {showComments && (
+              <motion.div initial={{ width: 0, opacity: 0 }} transition={{ type: "spring" }} animate={{ width: 400, opacity: 1 }} exit={{ width: 0, opacity: 0 }} className="flex max-h-screen w-[400px] flex-col shadow-xl">
+                <div className="flex items-center px-6 pt-4 text-slate-400">
+                  <span className="flex grow items-center gap-2 text-xs">
+                    <CgComment /> Comentários sobre o Projeto
+                  </span>
+                  <div className="font-regular grid h-9 w-9 cursor-pointer select-none place-items-center rounded-full text-xl hover:bg-slate-100">
+                    <CgArrowsExpandRight />
+                  </div>
+                  <div className="font-regular grid h-9 w-9 cursor-pointer select-none place-items-center rounded-full text-2xl hover:bg-slate-100" onClick={() => setShowComments(false)}>
+                    <CgClose />
+                  </div>
+                </div>
+                <BlueprintComments />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </main>
     </>
