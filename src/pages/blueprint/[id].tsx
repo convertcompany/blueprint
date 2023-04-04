@@ -6,7 +6,8 @@ import { api } from "~/utils/api";
 import { prisma } from "~/server/db";
 import superjson from "superjson";
 import Image from "next/image";
-import Button from "~/components/button";
+import BlueprintComments from "~/components/blueprintComments";
+import { CgArrowsExpandRight, CgClose, CgNotes } from "react-icons/cg";
 
 /** Pagina aonde o usuário edita o blueprint */
 const Blueprint: NextPage<{ id: string }> = ({ id }) => {
@@ -16,7 +17,7 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
       <Head>
         <title>Editando | {data?.name}</title>
       </Head>
-      <main className="flex flex-col">
+      <main className="flex h-screen flex-col">
         <nav className="flex items-center gap-6 border-b p-8 py-4 antialiased shadow-sm">
           <div className="flex grow flex-row items-center gap-4">
             <Image alt="Blueprint" src="/logos/light.svg" width={120} height={25} />
@@ -27,7 +28,18 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
           </div>
         </nav>
         <div className="flex grow">
-          <div className="flex grow flex-col border-r border-slate-200 p-4"></div>
+          <div className="flex w-3/5 flex-col border-r p-4">
+            <span>Ola</span>
+          </div>
+          <div className="flex grow flex-col antialiased">
+            <div className="flex items-center gap-2 border-b p-4 shadow-sm">
+              <CgNotes />
+              <label className="grow font-semibold">Notas</label>
+              <CgArrowsExpandRight size={20} />
+              <CgClose size={24} />
+            </div>
+            <BlueprintComments />
+          </div>
         </div>
       </main>
     </>
