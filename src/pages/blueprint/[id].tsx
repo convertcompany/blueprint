@@ -3,12 +3,13 @@ import type { GetStaticProps, NextPage } from "next";
 import dynamic from "next/dynamic";
 
 import Head from "next/head";
-import { appRouter } from "~/server/api/root";
-import { api } from "~/utils/api";
-import { prisma } from "~/server/db";
-import superjson from "superjson";
 import Image from "next/image";
+import Link from "next/link";
 import { CgArrowsExpandRight, CgClose, CgNotes } from "react-icons/cg";
+import superjson from "superjson";
+import { appRouter } from "~/server/api/root";
+import { prisma } from "~/server/db";
+import { api } from "~/utils/api";
 
 const BlueprintComments = dynamic(() => import("~/components/blueprintComments"), { ssr: false });
 
@@ -23,7 +24,9 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
       <main className="flex h-screen flex-col">
         <nav className="flex items-center gap-6 border-b p-8 py-4 antialiased shadow-sm">
           <div className="flex grow flex-row items-center gap-4">
-            <Image alt="Blueprint" src="/logos/light.svg" width={120} height={25} />
+            <Link href={"/"}>
+              <Image alt="Blueprint" src="/logos/light.svg" width={120} height={25} className="cursor-pointer" />
+            </Link>
             <div className="flex flex-col border-l pl-4 leading-4">
               <span className="text-base font-bold">{data?.name}</span>
               <span className="text-xs font-medium text-slate-500">{data?.description}</span>
@@ -31,10 +34,10 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
           </div>
         </nav>
         <div className="flex grow">
-          <div className="flex w-3/5 flex-col border-r p-4">
+          <div className="flex grow flex-col border-r p-4">
             <span>Ola</span>
           </div>
-          <div className="flex grow flex-col antialiased">
+          <div className="flex w-[400px] flex-col antialiased">
             <div className="flex items-center gap-2 border-b p-4 shadow-sm">
               <CgNotes />
               <label className="grow font-semibold">Notas</label>

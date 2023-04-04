@@ -1,18 +1,23 @@
 "use client";
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import TextStyle from "@tiptap/extension-text-style";
-import Color from "@tiptap/extension-color";
-import Placeholder from "@tiptap/extension-placeholder";
-import Collaboration from "@tiptap/extension-collaboration";
+import { EditorContent, useEditor } from "@tiptap/react";
 import * as Y from "yjs";
-import { HocuspocusProvider } from "@hocuspocus/provider";
+/** Tiptap Extensions */
+import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
+import Color from "@tiptap/extension-color";
+import Link from "@tiptap/extension-link";
+import Placeholder from "@tiptap/extension-placeholder";
+import TaskItem from "@tiptap/extension-task-item";
+import TaskList from "@tiptap/extension-task-list";
+import TextStyle from "@tiptap/extension-text-style";
+import StarterKit from "@tiptap/starter-kit";
+
 import { useUser } from "@clerk/nextjs";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 const ydoc = new Y.Doc();
 const provider = new HocuspocusProvider({
-  url: "ws://blueprint-beta.vercel.app:1234",
+  url: "ws://192.168.20.42:1234",
   document: ydoc,
   name: "user",
   forceSyncInterval: 200,
@@ -37,7 +42,7 @@ const BlueprintComments = () => {
       TextStyle,
       Color,
       Placeholder.configure({
-        placeholder: "Digite / para ver os comandos",
+        placeholder: 'Digite "/" para ver os comandos',
       }),
       Collaboration.configure({
         document: ydoc,
@@ -49,18 +54,23 @@ const BlueprintComments = () => {
           color: randomColor(),
         },
       }),
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+      }),
+      Link,
     ],
     content: "<h1>Novo Projeto</h1>",
     editorProps: {
       attributes: {
-        class: "prose w-full h-full focus:outline-none p-6 antialiased bg-gray-50/50",
+        class: "prose w-full h-full focus:outline-none p-6 antialiased bg-slate-50/50",
       },
     },
   });
 
   return (
     <>
-      <EditorContent editor={editor} className="blueprint-comments h-full" />;
+      <EditorContent editor={editor} className="blueprint-comments h-full" />
     </>
   );
 };

@@ -96,3 +96,64 @@
     user-select: none;
     white-space: nowrap;
 }
+
+.blueprint-comments ul[data-type="taskList"] {
+    list-style: none;
+    padding: 0;
+
+}
+
+.blueprint-comments ul[data-type="taskList"] p {
+    margin: 0;
+}
+
+.blueprint-comments ul[data-type="taskList"] li {
+    display: flex;
+
+}
+
+.blueprint-comments a {
+    color: #2f84d3;
+    font-weight: 500;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.blueprint-comments ul[data-type="taskList"] li>label {
+    flex: 0 0 auto;
+    margin-right: 0.5rem;
+    user-select: none;
+    vertical-align: middle;
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 5px;
+    border: 1px solid #adb5bd;
+    position: relative;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #2457ff;
+    border: 1px solid #2457ff;
+}
+
+input[type="checkbox"]:checked::after {
+    content: '\2713';
+    color: #FFF;
+    font-weight: 900;
+    padding: 0px;
+    line-height: 10px;
+    font-size: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.blueprint-comments ul[data-type="taskList"] li>div {
+    flex: 1 1 auto;
+}
