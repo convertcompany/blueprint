@@ -65,7 +65,6 @@ export const blueprintsRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        description: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -74,7 +73,6 @@ export const blueprintsRouter = createTRPCRouter({
         data: {
           authorId,
           name: input.name,
-          description: input.description,
         },
       });
       return blueprint;
@@ -85,7 +83,6 @@ export const blueprintsRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         name: z.string(),
-        description: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -95,7 +92,6 @@ export const blueprintsRouter = createTRPCRouter({
         },
         data: {
           name: input.name,
-          description: input.description,
         },
       });
       return blueprint;

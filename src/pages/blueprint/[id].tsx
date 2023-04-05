@@ -19,14 +19,14 @@ const BlueprintComments = dynamic(() => import("~/components/blueprintComments")
 /** Pagina aonde o usuário edita o blueprint */
 const Blueprint: NextPage<{ id: string }> = ({ id }) => {
   const [showComments, setShowComments] = useState(false);
-  const { data } = api.blueprints.getBlueprintById.useQuery({ id });
+  const { data, isLoading } = api.blueprints.getBlueprintById.useQuery({ id });
   return (
     <>
       <Head>
-        <title>Editando | {data?.name}</title>
+        <title>{ isLoading ? "Carregando..." : `Editando | ${data?.name}` }</title>
       </Head>
       <main className="flex h-screen max-h-screen flex-col overflow-hidden">
-        <nav className="flex items-center gap-6 border-b p-8 py-4 antialiased shadow-sm">
+        <nav className="flex items-center gap-6 border-b p-8 py-4 antialiased shadow-sm h-16 box-border">
           <div className="flex grow flex-row items-center gap-4">
             <Link href={"/"}>
               <Image alt="Blueprint" src="/logos/light.svg" width={120} height={25} className="cursor-pointer" />
@@ -35,7 +35,6 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
               <span className="text-base font-bold" onClick={() => setShowComments(!showComments)}>
                 {data?.name}
               </span>
-              <span className="text-xs font-medium text-slate-500">{data?.description}</span>
             </div>
           </div>
         </nav>

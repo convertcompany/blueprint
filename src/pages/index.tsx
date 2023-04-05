@@ -11,11 +11,14 @@ dayjs.extend(relativeTime);
 import { Blueprint } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import toast, { Toast, Toaster } from "react-hot-toast";
 import { TbEdit, TbLink, TbTextSize, TbTrash } from "react-icons/tb";
+import { TiWarning } from "react-icons/ti";
 import Button from "~/components/button";
 import ContextMenu from "~/components/contextMenu";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
+import { toastContainerStyle, toastOptions } from "~/utils/constants";
 
 type BlueprintProps = RouterOutputs["blueprints"]["getAll"][number];
 const Home: NextPage = () => {
@@ -24,14 +27,20 @@ const Home: NextPage = () => {
 
   const { mutate, isLoading: isCreating } = api.blueprints.create.useMutation({
     onSuccess: (blueprint: Blueprint) => {
+      toast.remove();
+      toast.success("Projeto criado com sucesso!")
       window.location.href = `/blueprint/${blueprint.id}`;
     },
+    onError: () => {
+      toast.remove();
+      toast.error("Ocorreu um erro ao criar o projeto!");
+    }
   });
 
   const createBlueprint = () => {
+    toast.loading("Criando novo projeto...");
     mutate({
       name: "Untitled",
-      description: "Descrição do projeto",
     });
   };
 
@@ -42,8 +51,9 @@ const Home: NextPage = () => {
         <meta name="description" content="Blueprint" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Toaster toastOptions={toastOptions} containerStyle={toastContainerStyle}/>
       <main className="flex h-screen w-screen flex-col">
-        <nav className="flex items-center gap-6 border-b p-8 py-4 antialiased shadow-sm">
+        <nav className="flex items-center gap-6 border-b p-8 py-4 antialiased shadow-sm h-16 box-border">
           <div className="grow">
             <Image alt="Blueprint" src="/logos/light.svg" width={120} height={25} />
           </div>
@@ -74,8 +84,8 @@ const Home: NextPage = () => {
                   <div className="flex grow flex-col items-center justify-center">
                     <Image alt="Icone" width={60} height={60} src={"/logos/icon.svg"} className="mb-6 grayscale" />
                     <h2 className="text-2xl font-semibold">Nenhum Blueprint encontrado</h2>
-                    <p className="mb-4 text-sm text-slate-500">Clique no botão abaixo para criar um novo projeto</p>
-                    <Button className="bg-slate-950" onClick={createBlueprint} isLoading={isCreating}>
+                    <p className="mb-8 text-sm text-slate-500">Clique no botão abaixo para criar um novo projeto</p>
+                    <Button className="bg-slate-950" onClick={createBlueprint}>
                       Criar novo projeto
                     </Button>
                   </div>
@@ -115,21 +125,36 @@ const CreateBlueprintButton = ({ createBlueprint, isCreating }: { createBlueprin
 
 const BlueprintCard = (blueprint: BlueprintProps) => {
   const { id } = blueprint;
-  const { mutate: deleteMutate, isLoading: isDeleting } = api.blueprints.delete.useMutation({
+  const ctx = api.useContext();
+  const { mutate, isLoading: isDeleting } = api.blueprints.delete.useMutation({
     onSuccess: () => {
-      // toast.success("Blueprint deletado com sucesso");
-      api.blueprints.getAll.useQuery();
+      toast.remove();
+      toast.success("Blueprint deletado com sucesso");
+      void ctx.blueprints.getAll.invalidate();
+    },
+    onError: () => {
+      toast.remove();
+      toast.error("Erro ao deletar blueprint");
     },
   });
 
-  /** Função para deletar node */
+  /** Função para deletar blueprint */
   const deleteBlueprint = () => {
-    deleteMutate({ id });
+    toast.remove();
+    toast.loading("Deletando projeto...");
+    mutate({ id });
   };
 
-  /** Função para editar node */
+  /** Função para editar blueprint */
   const editBlueprint = () => {
     window.location.href = `/blueprint/${blueprint.id}`;
+  };
+
+  /** Função para gerar link do blueprint */
+  const shareBlueprint = () => {
+    const url = `${window.location.origin}/blueprint/${blueprint.id}`;
+    navigator.clipboard.writeText(url);
+    toast.success("Link copiado para o clipboard");
   };
 
   const contextMenuItems = [
@@ -145,27 +170,48 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
     },
     {
       label: "Copiar Link",
-      onSelect: editBlueprint,
+      onSelect: shareBlueprint,
       icon: <TbLink />,
     },
     {
       label: "Deletar",
-      onSelect: deleteBlueprint,
+      onSelect: () => {
+        toast((t:Toast) => {
+          return (
+            <div className="flex items-center gap-3 ml-2">
+              <span>
+                Você tem certeza que deseja deletar esse projeto?
+              </span>
+              <Button className="bg-slate-700 hover:bg-slate-600" onClick={() => toast.dismiss(t.id)} > Não </Button>
+              <Button className="bg-rose-500 hover:bg-rose-600" onClick={() => {
+                toast.dismiss(t.id);
+                deleteBlueprint();
+              }} > Sim </Button>
+            </div>
+          )
+        }, {
+          icon: <TiWarning size={28} color="#FCD34E"/>,
+          style : { 
+            maxWidth : "500px",
+          },
+          position: "bottom-center",
+          duration : Infinity
+        });
+      },
       icon: <TbTrash />,
     },
   ];
 
   return (
     <ContextMenu items={contextMenuItems}>
-      <Link href={`/blueprint/${blueprint.id}`} className="cursor-default" tabIndex={0}>
-        <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm  transition-all hover:shadow-md focus:outline-none  active:shadow-none">
+      <Link href={`/blueprint/${blueprint.id}`} className="cursor-default" tabIndex={-1}>
+        <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm  transition-all hover:shadow-md focus:outline-none  active:shadow-none ring-blue-500 ring-offset-2 focus-visible:ring-2" tabIndex={0}>
           <Image src={"/teste.png"} width={1000} height={80} alt={"teste"} />
           <div className="border-t p-3 pt-2">
             <span className="text-base font-semibold">{blueprint.name}</span>
-            <p className="text-sm text-slate-500">{blueprint.description}</p>
             {!!blueprint?.authorId && (
               <div className="mt-2 flex items-center gap-2">
-                <Image alt="Imagem" src={blueprint?.author?.profileImageUrl ?? ""} onClick={deleteBlueprint} className="rounded-full" width={20} height={20} />
+                <Image alt="Imagem" src={blueprint?.author?.profileImageUrl ?? ""} className="rounded-full" width={20} height={20} />
                 <p className="text-xs font-medium text-slate-500 ">
                   por {blueprint.author.fullName} • {dayjs(blueprint.createdAt).fromNow()}
                 </p>
