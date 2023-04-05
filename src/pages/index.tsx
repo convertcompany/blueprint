@@ -73,7 +73,7 @@ const Home: NextPage = () => {
                     <Image alt="Icone" width={60} height={60} src={"/logos/icon.svg"} className="mb-6 grayscale" />
                     <h2 className="text-2xl font-semibold">Nenhum Blueprint encontrado</h2>
                     <p className="mb-4 text-sm text-slate-500">Clique no botão abaixo para criar um novo projeto</p>
-                    <Button className="bg-slate-950" onClick={createBlueprint}>
+                    <Button className="bg-slate-950" onClick={createBlueprint} isLoading={isCreating}>
                       Criar novo projeto
                     </Button>
                   </div>
@@ -98,7 +98,7 @@ const Home: NextPage = () => {
 
 const CreateBlueprintButton = ({ createBlueprint, isCreating }: { createBlueprint: () => void; isCreating: boolean }) => {
   return (
-    <div onClick={createBlueprint} className="relative flex select-none items-center gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 antialiased shadow-sm outline-none ring-blue-500 ring-offset-2 transition-all hover:shadow-md focus-visible:ring-2 active:shadow-none" tabIndex={0}>
+    <div onClick={createBlueprint} className={`relative flex select-none items-center gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 antialiased shadow-sm outline-none ring-blue-500 ring-offset-2 transition-all hover:shadow-md focus-visible:ring-2 active:shadow-none ${isCreating ? "pointer-events-none" : ""}`} tabIndex={0}>
       <div className="relative">
         <Image alt="Icone" width={24} height={24} src={"/logos/icon.svg"} className="grayscale" />
         <IoMdAddCircle className="text-md absolute left-4 top-3 rounded-full bg-white text-blue-500" />
@@ -111,27 +111,30 @@ const CreateBlueprintButton = ({ createBlueprint, isCreating }: { createBlueprin
   );
 };
 
-const DeleteBlueprintButton = ({ id }: { id: string }) => {
-  const { mutate } = api.blueprints.delete.useMutation();
+const BlueprintCard = (blueprint: BlueprintProps) => {
+  /** Função para deletar node */
   const deleteBlueprint = () => {
+    const { id } = blueprint;
+    const { mutate } = api.blueprints.delete.useMutation();
     mutate({ id });
     window.location.reload();
   };
-  return <div onClick={deleteBlueprint} tabIndex={0}></div>;
-};
 
-const BlueprintCard = (blueprint: BlueprintProps) => {
+  /** Função para editar node */
+  const editBlueprint = () => {
+    window.location.reload();
+  };
+
   return (
-    <Link href={`/blueprint/${blueprint.id}`}>
-      <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm outline-none ring-blue-500 ring-offset-2 transition-all hover:shadow-md focus-visible:ring-2 active:shadow-none" tabIndex={0}>
+    <Link href={`/blueprint/${blueprint.id}`} className="cursor-default" tabIndex={0}>
+      <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm  transition-all hover:shadow-md focus:outline-none  active:shadow-none">
         <Image src={"/teste.png"} width={1000} height={80} alt={"teste"} />
-        <DeleteBlueprintButton id={blueprint.id} />
         <div className="border-t p-3 pt-2">
           <span className="text-base font-semibold">{blueprint.name}</span>
           <p className="text-sm text-slate-500">{blueprint.description}</p>
           {!!blueprint?.authorId && (
             <div className="mt-2 flex items-center gap-2">
-              <Image alt="Imagem" src={blueprint?.author?.profileImageUrl ?? ""} className="rounded-full" width={20} height={20} />
+              <Image alt="Imagem" src={blueprint?.author?.profileImageUrl ?? ""} onClick={deleteBlueprint} className="rounded-full" width={20} height={20} />
               <p className="text-xs font-medium text-slate-500 ">
                 por {blueprint.author.fullName} • {dayjs(blueprint.createdAt).fromNow()}
               </p>
