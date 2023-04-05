@@ -4152,10 +4152,10 @@
     "level" "^6.0.1"
     "lib0" "^0.2.31"
 
-"y-prosemirror@^1.2.1", "y-prosemirror@1.0.20":
-  "integrity" "sha512-czMBfB1eL2awqmOSxQM8cS/fsUOGE6fjvyPLInrh4crPxFiw67wDpwIW+EGBYKRa04sYbS0ScGj7ZgvWuDrmBQ=="
-  "resolved" "https://registry.npmjs.org/y-prosemirror/-/y-prosemirror-1.2.1.tgz"
-  "version" "1.2.1"
+"y-prosemirror@^1.0.20", "y-prosemirror@1.0.20":
+  "integrity" "sha512-LVMtu3qWo0emeYiP+0jgNcvZkqhzE/otOoro+87q0iVKxy/sMKuiJZnokfJdR4cn9qKx0Un5fIxXqbAlR2bFkA=="
+  "resolved" "https://registry.npmjs.org/y-prosemirror/-/y-prosemirror-1.0.20.tgz"
+  "version" "1.0.20"
   dependencies:
     "lib0" "^0.2.42"
 
@@ -4199,7 +4199,7 @@
   "resolved" "https://registry.npmjs.org/yaml/-/yaml-1.10.2.tgz"
   "version" "1.10.2"
 
-"yjs@^13.0.0", "yjs@^13.5.29", "yjs@^13.5.38", "yjs@^13.5.52", "yjs@^13.5.6":
+"yjs@^13.0.0", "yjs@^13.3.2", "yjs@^13.5.29", "yjs@^13.5.52", "yjs@^13.5.6":
   "integrity" "sha512-wTajR70VeI6uztpUk4kMcXYHSRzuUlNyJPdBG9NII0EcFf27DwGduZEm3XbP7VSzlGx5n6uenBhOPX+YuPH/tA=="
   "resolved" "https://registry.npmjs.org/yjs/-/yjs-13.5.52.tgz"
   "version" "13.5.52"

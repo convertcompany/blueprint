@@ -1,0 +1,45 @@
+{
+    "gitSemanticCommit.types": [
+
+        {
+        "type": "✨ feat",
+        "description": "Production changes related to new backward-compatible abilities or functionality"
+      },
+      {
+        "type": "🚧 fix",
+        "description": "Production changes related to backward-compatible bug fixes"
+      },
+      {
+        "type": "🎨 style",
+        "description": "Development changes related to styling the codebase"
+      },
+      {
+        "type": "🛠️ build",
+        "description": "Development changes related to the build system"
+      },
+      {
+        "type": "🌎 ci",
+        "description": "Development changes related to the continuous integration and deployment system"
+      },
+      {
+        "type": "📝 docs",
+        "description": "Documentation changes related to the project"
+      },
+      {
+        "type": "⏳ perf",
+        "description": "Production changes related to backward-compatible performance improvements"
+      },
+      {
+        "type": "♻️ refactor",
+        "description": "Development changes related to modifying the codebase"
+      },
+      {
+        "type": "🧪 test",
+        "description": "Development changes related to tests"
+      },
+      {
+        "type": "🔧 chore",
+        "description": "Development changes related to tasks"
+      }
+    ]
+}

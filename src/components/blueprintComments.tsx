@@ -6,20 +6,20 @@ import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 import Color from "@tiptap/extension-color";
 import Link from "@tiptap/extension-link";
+import Mention from "@tiptap/extension-mention";
 import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
 import StarterKit from "@tiptap/starter-kit";
+import suggestion from "./tiptap/commandSuggestion";
 
 import { useUser } from "@clerk/nextjs";
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import Mention from "@tiptap/extension-mention";
-import suggestion from "./tiptap/commandSuggestion";
 
 const ydoc = new Y.Doc();
 const provider = new HocuspocusProvider({
-  url: "ws://192.168.20.42:1234",
+  url: "ws://localhost:1234",
   document: ydoc,
   name: "user",
   forceSyncInterval: 200,

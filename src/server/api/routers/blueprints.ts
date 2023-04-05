@@ -1,7 +1,7 @@
 import type { User } from "@clerk/nextjs/dist/api";
 import { clerkClient } from "@clerk/nextjs/server";
-import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { z } from "zod";
+import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
 const filterUserForClient = (user: User) => {
   return {

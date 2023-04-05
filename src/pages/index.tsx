@@ -1,22 +1,37 @@
 import { useUser } from "@clerk/nextjs";
-import { type NextPage } from "next";
-import Head from "next/head";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { type NextPage } from "next";
+import Head from "next/head";
+import { IoMdAddCircle } from "react-icons/io";
 dayjs.locale("pt-br");
 dayjs.extend(relativeTime);
-import { IoMdAddCircle } from "react-icons/io";
 
-import { api } from "~/utils/api";
-import type { RouterOutputs } from "~/utils/api";
+import { Blueprint } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import Button from "~/components/button";
+import type { RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 
 type BlueprintProps = RouterOutputs["blueprints"]["getAll"][number];
 const Home: NextPage = () => {
   const user = useUser();
   const { data, isLoading } = api.blueprints.getAll.useQuery();
+
+  const { mutate, isLoading: isCreating } = api.blueprints.create.useMutation({
+    onSuccess: (blueprint: Blueprint) => {
+      window.location.href = `/blueprint/${blueprint.id}`;
+    },
+  });
+
+  const createBlueprint = () => {
+    mutate({
+      name: "Untitled",
+      description: "Descrição do projeto",
+    });
+  };
 
   return (
     <>
@@ -57,11 +72,14 @@ const Home: NextPage = () => {
                   <div className="flex grow flex-col items-center justify-center">
                     <Image alt="Icone" width={60} height={60} src={"/logos/icon.svg"} className="mb-6 grayscale" />
                     <h2 className="text-2xl font-semibold">Nenhum Blueprint encontrado</h2>
-                    <p className="text-sm text-slate-500">Clique no botão abaixo para criar um novo projeto</p>
+                    <p className="mb-4 text-sm text-slate-500">Clique no botão abaixo para criar um novo projeto</p>
+                    <Button className="bg-slate-950" onClick={createBlueprint}>
+                      Criar novo projeto
+                    </Button>
                   </div>
                 ) : (
                   <>
-                    <CreateBlueprintButton />
+                    <CreateBlueprintButton createBlueprint={createBlueprint} isCreating={isCreating} />
                     <div className="grid grid-cols-1 gap-6 transition-all sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                       {data?.map((blueprint: BlueprintProps) => (
                         <BlueprintCard {...blueprint} key={blueprint?.id} />
@@ -78,15 +96,7 @@ const Home: NextPage = () => {
   );
 };
 
-const CreateBlueprintButton = () => {
-  const { mutate } = api.blueprints.create.useMutation();
-
-  const createBlueprint = () => {
-    const blueprint = mutate({ name: "Novo Projeto", description: "Descrição do projeto" });
-    window.location.reload();
-    return blueprint;
-  };
-
+const CreateBlueprintButton = ({ createBlueprint, isCreating }: { createBlueprint: () => void; isCreating: boolean }) => {
   return (
     <div onClick={createBlueprint} className="relative flex select-none items-center gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 antialiased shadow-sm outline-none ring-blue-500 ring-offset-2 transition-all hover:shadow-md focus-visible:ring-2 active:shadow-none" tabIndex={0}>
       <div className="relative">
