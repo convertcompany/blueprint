@@ -11,9 +11,10 @@ dayjs.extend(relativeTime);
 import { Blueprint } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import toast, { Toast, Toaster } from "react-hot-toast";
 import { TbEdit, TbLink, TbTextSize, TbTrash } from "react-icons/tb";
-import { TiWarning } from "react-icons/ti";
+import { TiTick, TiWarning } from "react-icons/ti";
 import Button from "~/components/button";
 import ContextMenu from "~/components/contextMenu";
 import type { RouterOutputs } from "~/utils/api";
@@ -124,6 +125,8 @@ const CreateBlueprintButton = ({ createBlueprint, isCreating }: { createBlueprin
 };
 
 const BlueprintCard = (blueprint: BlueprintProps) => {
+  const [blueprintState, setBlueprintState] = useState<BlueprintProps>(blueprint);
+  const [renaming, setRenaming] = useState(false);
   const { id } = blueprint;
   const ctx = api.useContext();
   const { mutate, isLoading: isDeleting } = api.blueprints.delete.useMutation({
@@ -165,7 +168,7 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
     },
     {
       label: "Renomear",
-      onSelect: editBlueprint,
+      onSelect: () => setRenaming(true),
       icon: <TbTextSize />,
     },
     {
@@ -204,11 +207,31 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
 
   return (
     <ContextMenu items={contextMenuItems}>
-      <Link href={`/blueprint/${blueprint.id}`} className="cursor-default" tabIndex={-1}>
+      <Link href={renaming ? `` : `/blueprint/${blueprint.id}`} className="cursor-default" tabIndex={-1}>
         <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm  transition-all hover:shadow-md focus:outline-none  active:shadow-none ring-blue-500 ring-offset-2 focus-visible:ring-2" tabIndex={0}>
           <Image src={"/teste.png"} width={1000} height={80} alt={"teste"} />
           <div className="border-t p-3 pt-2">
-            <span className="text-base font-semibold">{blueprint.name}</span>
+            {
+              renaming ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    className="w-full bg-transparent border-none outline-none text-base font-semibold"
+                    value={blueprintState?.name}
+                    onChange={(e) => setBlueprintState({ ...blueprintState, name: e.target.value })}
+                    onBlur={() => setRenaming(false)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setRenaming(false);
+                      }
+                    }}
+                    />
+                  <TiTick size={20} className="cursor-pointer" onClick={() => setRenaming(false)} />
+                </div>
+              ) : (
+                <span className="text-base font-semibold">{blueprintState?.name}</span>
+              )
+            }
             {!!blueprint?.authorId && (
               <div className="mt-2 flex items-center gap-2">
                 <Image alt="Imagem" src={blueprint?.author?.profileImageUrl ?? ""} className="rounded-full" width={20} height={20} />
