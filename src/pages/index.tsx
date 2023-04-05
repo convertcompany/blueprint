@@ -11,7 +11,9 @@ dayjs.extend(relativeTime);
 import { Blueprint } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import { TbEdit, TbLink, TbTextSize, TbTrash } from "react-icons/tb";
 import Button from "~/components/button";
+import ContextMenu from "~/components/contextMenu";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 
@@ -112,12 +114,17 @@ const CreateBlueprintButton = ({ createBlueprint, isCreating }: { createBlueprin
 };
 
 const BlueprintCard = (blueprint: BlueprintProps) => {
+  const { id } = blueprint;
+  const { mutate: deleteMutate, isLoading: isDeleting } = api.blueprints.delete.useMutation({
+    onSuccess: () => {
+      // toast.success("Blueprint deletado com sucesso");
+      api.blueprints.getAll.useQuery();
+    },
+  });
+
   /** Função para deletar node */
   const deleteBlueprint = () => {
-    const { id } = blueprint;
-    const { mutate } = api.blueprints.delete.useMutation();
-    mutate({ id });
-    window.location.reload();
+    deleteMutate({ id });
   };
 
   /** Função para editar node */
@@ -125,24 +132,49 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
     window.location.reload();
   };
 
+  const contextMenuItems = [
+    {
+      label: "Editar",
+      onSelect: editBlueprint,
+      icon: <TbEdit />,
+    },
+    {
+      label: "Renomear",
+      onSelect: editBlueprint,
+      icon: <TbTextSize />,
+    },
+    {
+      label: "Copiar Link",
+      onSelect: editBlueprint,
+      icon: <TbLink />,
+    },
+    {
+      label: "Deletar",
+      onSelect: deleteBlueprint,
+      icon: <TbTrash />,
+    },
+  ];
+
   return (
-    <Link href={`/blueprint/${blueprint.id}`} className="cursor-default" tabIndex={0}>
-      <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm  transition-all hover:shadow-md focus:outline-none  active:shadow-none">
-        <Image src={"/teste.png"} width={1000} height={80} alt={"teste"} />
-        <div className="border-t p-3 pt-2">
-          <span className="text-base font-semibold">{blueprint.name}</span>
-          <p className="text-sm text-slate-500">{blueprint.description}</p>
-          {!!blueprint?.authorId && (
-            <div className="mt-2 flex items-center gap-2">
-              <Image alt="Imagem" src={blueprint?.author?.profileImageUrl ?? ""} onClick={deleteBlueprint} className="rounded-full" width={20} height={20} />
-              <p className="text-xs font-medium text-slate-500 ">
-                por {blueprint.author.fullName} • {dayjs(blueprint.createdAt).fromNow()}
-              </p>
-            </div>
-          )}
+    <ContextMenu items={contextMenuItems}>
+      <Link href={`/blueprint/${blueprint.id}`} className="cursor-default" tabIndex={0}>
+        <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm  transition-all hover:shadow-md focus:outline-none  active:shadow-none">
+          <Image src={"/teste.png"} width={1000} height={80} alt={"teste"} />
+          <div className="border-t p-3 pt-2">
+            <span className="text-base font-semibold">{blueprint.name}</span>
+            <p className="text-sm text-slate-500">{blueprint.description}</p>
+            {!!blueprint?.authorId && (
+              <div className="mt-2 flex items-center gap-2">
+                <Image alt="Imagem" src={blueprint?.author?.profileImageUrl ?? ""} onClick={deleteBlueprint} className="rounded-full" width={20} height={20} />
+                <p className="text-xs font-medium text-slate-500 ">
+                  por {blueprint.author.fullName} • {dayjs(blueprint.createdAt).fromNow()}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </ContextMenu>
   );
 };
 
