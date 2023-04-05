@@ -18,9 +18,9 @@ const ContextMenu = (props: ContextMenuProps) => {
       <ContextMenuRadix.Trigger tabIndex={-1}>{children}</ContextMenuRadix.Trigger>
       <ContextMenuRadix.Content className="z-10 w-48 rounded-xl bg-black px-1.5 py-1.5 antialiased shadow-md md:w-56">
         {items?.map((item, index) => (
-          <ContextMenuRadix.Item className="flex cursor-default select-none items-center rounded-lg border border-transparent px-1.5 py-1.5 text-lg text-white outline-none focus:border-blue-500 focus:bg-blue-600" onSelect={item.onSelect} key={index}>
+          <ContextMenuRadix.Item className="flex cursor-default select-none items-center rounded-lg border border-transparent px-1.5 py-1.5 text-lg text-gray-500 outline-none focus:border-blue-500 focus:bg-blue-600 focus:text-white" onSelect={item.onSelect} key={index}>
             {item.icon}
-            <span className="ml-2 text-sm font-semibold">{item.label}</span>
+            <span className="ml-2 text-sm font-medium text-white">{item.label}</span>
           </ContextMenuRadix.Item>
         ))}
       </ContextMenuRadix.Content>

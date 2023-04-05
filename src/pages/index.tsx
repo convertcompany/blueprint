@@ -129,7 +129,7 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
 
   /** Função para editar node */
   const editBlueprint = () => {
-    window.location.reload();
+    window.location.href = `/blueprint/${blueprint.id}`;
   };
 
   const contextMenuItems = [
