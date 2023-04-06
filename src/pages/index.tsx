@@ -9,6 +9,7 @@ dayjs.locale("pt-br");
 dayjs.extend(relativeTime);
 
 import { Blueprint } from "@prisma/client";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
@@ -67,7 +68,7 @@ const Home: NextPage = () => {
           </div>
         </nav>
         <div className="flex grow bg-slate-50 p-8">
-          <div className="flex grow flex-col gap-6">
+          <div className="flex grow flex-col">
             {isLoading ? (
               <div className="flex grow flex-col items-center justify-center">
                 <div role="status">
@@ -82,23 +83,27 @@ const Home: NextPage = () => {
             ) : (
               <>
                 {data?.length === 0 ? (
-                  <div className="flex grow flex-col items-center justify-center">
-                    <Image alt="Icone" width={60} height={60} src={"/logos/icon.svg"} className="mb-6 grayscale" />
-                    <h2 className="text-2xl font-semibold">Nenhum Blueprint encontrado</h2>
-                    <p className="mb-8 text-sm text-slate-500">Clique no botão abaixo para criar um novo projeto</p>
-                    <Button className="bg-slate-950" onClick={createBlueprint}>
-                      Criar novo projeto
-                    </Button>
-                  </div>
+                  <AnimatePresence>
+                    <motion.div className="flex grow flex-col items-center justify-center" key={"container-empty"} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
+                      <Image alt="Icone" width={60} height={60} src={"/logos/icon.svg"} className="mb-6 grayscale" />
+                      <h2 className="text-2xl font-semibold">Nenhum Blueprint encontrado</h2>
+                      <p className="mb-8 text-sm text-slate-500">Clique no botão abaixo para criar um novo projeto</p>
+                      <Button className="bg-slate-950" onClick={createBlueprint}>
+                        Criar novo projeto
+                      </Button>
+                    </motion.div>
+                  </AnimatePresence>
                 ) : (
-                  <>
-                    <CreateBlueprintButton createBlueprint={createBlueprint} isCreating={isCreating} />
-                    <div className="grid grid-cols-1 gap-6 transition-all sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                      {data?.map((blueprint: BlueprintProps) => (
-                        <BlueprintCard {...blueprint} key={blueprint?.id} />
-                      ))}
-                    </div>
-                  </>
+                  <AnimatePresence>
+                    <motion.div className="flex flex-col gap-6" key={"container-blueprints"} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, height: 0 }} >
+                      <CreateBlueprintButton createBlueprint={createBlueprint} isCreating={isCreating} />
+                      <div className="grid grid-cols-1 gap-6 transition-all sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                        {data?.map((blueprint: BlueprintProps) => (
+                          <BlueprintCard {...blueprint} key={blueprint?.id} />
+                          ))}
+                      </div>
+                    </motion.div>
+                </AnimatePresence>
                 )}
               </>
             )}
@@ -134,8 +139,9 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
   const { mutate:deleteMutate } = api.blueprints.delete.useMutation({
     onSuccess: () => {
       toast.remove();
-      toast.success("Projeto deletado com sucesso");
       void ctx.blueprints.getAll.invalidate();
+      toast.success("Projeto deletado com sucesso");
+      setTimeout(() => { toast.dismiss()}, 2000) // tenho que fazer por aqui senao ele nao some
     },
     onError: () => {
       toast.remove();
@@ -240,7 +246,7 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
   return (
     <ContextMenu items={contextMenuItems}>
       <Link href={renaming ? `` : `/blueprint/${blueprint.id}`} className="cursor-default" tabIndex={-1}>
-        <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm  transition-all hover:shadow-md focus:outline-none  active:shadow-none ring-blue-500 ring-offset-2 focus-visible:ring-2" tabIndex={0}>
+        <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm  transition-all hover:shadow-sm outline-none ring-blue-500 ring-offset-2 focus-visible:ring-2" tabIndex={0}>
           <Image src={"/teste.png"} width={1000} height={80} alt={"teste"} />
           <div className="border-t p-3 pt-2">
             {
