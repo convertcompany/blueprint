@@ -14,10 +14,21 @@ const filterUserForClient = (user: User) => {
 
 export const blueprintsRouter = createTRPCRouter({
   getAll: privateProcedure.query(async ({ ctx }) => {
+    const user = await clerkClient.users.getUser(ctx?.userId);
+
     const blueprints = await ctx.prisma.blueprint.findMany({
       take: 100,
       where: {
-        authorId: ctx.userId,
+        OR: [
+          {
+            authorId: ctx.userId,
+          },
+          {
+            allowedUsers: {
+              contains: user?.emailAddresses[0]?.emailAddress,
+            },
+          },
+        ],
       },
     });
 
@@ -83,15 +94,15 @@ export const blueprintsRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         name: z.string().optional(),
-        layout : z.object({}).optional(),
-        externalURL : z.string().optional(),
-        externalId : z.string().optional(),
-        comments : z.object({}).optional(),
-        companyName : z.string().optional(),
-        companyLogo : z.string().optional(),
-        hasOmni : z.boolean().optional(),
-        hasVoice : z.boolean().optional(),
-        hasIntegra : z.boolean().optional()
+        layout: z.object({}).optional(),
+        externalURL: z.string().optional(),
+        externalId: z.string().optional(),
+        comments: z.object({}).optional(),
+        companyName: z.string().optional(),
+        companyLogo: z.string().optional(),
+        hasOmni: z.boolean().optional(),
+        hasVoice: z.boolean().optional(),
+        hasIntegra: z.boolean().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -99,12 +110,12 @@ export const blueprintsRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-        data : {
+        data: {
           ...input,
           ...{
-            id : input.id,
-          }
-        }
+            id: input.id,
+          },
+        },
       });
       return blueprint;
     }),

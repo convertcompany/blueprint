@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { CgArrowsExpandRight, CgClose, CgComment } from "react-icons/cg";
+import { TbMessage } from "react-icons/tb";
 import superjson from "superjson";
 import BlueprintEditor from "~/components/blueprintEditor";
 import Button from "~/components/button";
@@ -23,10 +24,11 @@ const BlueprintComments = dynamic(() => import("~/components/blueprintComments")
 const Blueprint: NextPage<{ id: string }> = ({ id }) => {
   const [showComments, setShowComments] = useState(false);
   const { data, isLoading } = api.blueprints.getBlueprintById.useQuery({ id });
+  const original = structuredClone(data);
 
   // const ctx = api.useContext();
 
-  const { mutate:updateMutate, isLoading:isSaving } = api.blueprints.update.useMutation({
+  const { mutate: updateMutate, isLoading: isSaving } = api.blueprints.update.useMutation({
     onSuccess: () => {
       toast.remove();
       toast.success("Projeto salvo!");
@@ -40,31 +42,34 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
 
   const saveBlueprint = () => {
     toast.loading("Salvando...");
-    if ( !data ) return;
+    if (!data) return;
     updateMutate({ id: data.id, name: data.name });
-  }
+  };
 
   return (
     <>
       <Head>
-        <title>{ isLoading ? "Carregando..." : `Editando | ${data?.name ?? ""}` }</title>
+        <title>{isLoading ? "Carregando..." : `Editando | ${data?.name ?? ""}`}</title>
       </Head>
-      <Toaster toastOptions={toastOptions} containerStyle={toastContainerStyle}/>
+      <Toaster toastOptions={toastOptions} containerStyle={toastContainerStyle} />
       <main className="flex h-screen max-h-screen flex-col overflow-hidden">
         {/* Barra de Navegação do Projeto */}
-        <nav className="flex items-center gap-6 border-b p-8 py-4 antialiased shadow-sm h-16 box-border">
+        <nav className="box-border flex h-16 items-center gap-6 border-b p-8 py-4 antialiased shadow-sm">
           <div className="flex grow flex-row items-center gap-4">
             <Link href={"/"}>
               <Image alt="Blueprint" src="/logos/light.svg" width={120} height={25} className="cursor-pointer" />
             </Link>
-            <div  className="flex grow flex-col border-l pl-4 leading-4">
-              <span className="text-base font-bold" onClick={() => setShowComments(!showComments)}>
-                {data?.name}
-              </span>
+            <div className="flex grow flex-col border-l pl-4 leading-4">
+              <span className="text-base font-bold">{data?.name}</span>
             </div>
             <div className="flex gap-2">
               <Button isOutlined={true}>Compartilhar</Button>
-              <Button onClick={saveBlueprint} isLoading={isSaving}>Salvar</Button>
+              <Button isOutlined={true} className={showComments ? "border-transparent bg-slate-900 text-white hover:bg-slate-900" : ""} onClick={() => setShowComments(!showComments)}>
+                <TbMessage size={18} />
+              </Button>
+              <Button onClick={saveBlueprint} isLoading={isSaving}>
+                Salvar
+              </Button>
             </div>
           </div>
         </nav>

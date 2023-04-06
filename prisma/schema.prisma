@@ -12,20 +12,22 @@ datasource db {
 }
 
 model Blueprint {
-  id          String   @id @default(cuid())
-  name        String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  authorId    String
-  layout      Json?
-  externalURL String   @default("")
-  externalId  String   @default("")
-  comments    Json?
-  companyName String   @default("")
-  companyLogo String   @default("")
-  hasOmni     Boolean  @default(false)
-  hasVoice    Boolean  @default(false)
-  hasIntegra  Boolean  @default(false)
+  id            String   @id @default(cuid())
+  name          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  authorId      String
+  layout        Json?
+  externalURL   String   @default("")
+  externalId    String   @default("")
+  comments      Json?
+  layoutPreview String   @default("")
+  companyName   String   @default("")
+  companyLogo   String   @default("")
+  hasOmni       Boolean  @default(false)
+  hasVoice      Boolean  @default(false)
+  hasIntegra    Boolean  @default(false)
+  allowedUsers  String   @default("")
 
   @@index([authorId])
 }

@@ -25,7 +25,7 @@ const provider = new HocuspocusProvider({
   forceSyncInterval: 200,
 });
 
-const BlueprintComments = () => {
+const BlueprintComments = ({ value }: { value: JSON | null }) => {
   const user = useUser();
   const randomColor = () => {
     const letters = "0123456789ABCDEF";
