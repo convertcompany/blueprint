@@ -17,10 +17,10 @@ model Blueprint {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   authorId    String
-  layout      Json     @default("{}")
+  layout      Json?
   externalURL String   @default("")
   externalId  String   @default("")
-  comments    String   @default("{}")
+  comments    Json?
   companyName String   @default("")
   companyLogo String   @default("")
   hasOmni     Boolean  @default(false)

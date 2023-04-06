@@ -11,10 +11,10 @@ dayjs.extend(relativeTime);
 import { Blueprint } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import toast, { Toast, Toaster } from "react-hot-toast";
 import { TbEdit, TbLink, TbTextSize, TbTrash } from "react-icons/tb";
-import { TiTick, TiWarning } from "react-icons/ti";
+import { TiWarning } from "react-icons/ti";
 import Button from "~/components/button";
 import ContextMenu from "~/components/contextMenu";
 import type { RouterOutputs } from "~/utils/api";
@@ -127,17 +127,31 @@ const CreateBlueprintButton = ({ createBlueprint, isCreating }: { createBlueprin
 const BlueprintCard = (blueprint: BlueprintProps) => {
   const [blueprintState, setBlueprintState] = useState<BlueprintProps>(blueprint);
   const [renaming, setRenaming] = useState(false);
+  const renamingRef = useRef<HTMLInputElement>(null);
   const { id } = blueprint;
   const ctx = api.useContext();
-  const { mutate, isLoading: isDeleting } = api.blueprints.delete.useMutation({
+
+  const { mutate:deleteMutate } = api.blueprints.delete.useMutation({
     onSuccess: () => {
       toast.remove();
-      toast.success("Blueprint deletado com sucesso");
+      toast.success("Projeto deletado com sucesso");
       void ctx.blueprints.getAll.invalidate();
     },
     onError: () => {
       toast.remove();
-      toast.error("Erro ao deletar blueprint");
+      toast.error("Erro ao deletar projeto");
+    },
+  });
+  
+  const { mutate:editMutate } = api.blueprints.update.useMutation({
+    onSuccess: () => {
+      toast.remove();
+      toast.success("Projeto salvo!");
+      void ctx.blueprints.getAll.invalidate();
+    },
+    onError: () => {
+      toast.remove();
+      toast.error("Erro ao renomear projeto");
     },
   });
 
@@ -145,7 +159,7 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
   const deleteBlueprint = () => {
     toast.remove();
     toast.loading("Deletando projeto...");
-    mutate({ id });
+    deleteMutate({ id });
   };
 
   /** Função para editar blueprint */
@@ -160,6 +174,17 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
     toast.success("Link copiado para o clipboard");
   };
 
+  /** Salvar blueprint após renomear */
+  const renameBlueprint = () => {
+    setRenaming(false);
+    if (blueprintState.name === blueprint.name) return;
+    if ( blueprintState.name === "" ){
+      setBlueprintState(blueprint);
+      return;
+    }
+    editMutate({ id : blueprint.id, name : blueprintState.name });
+  };
+
   const contextMenuItems = [
     {
       label: "Editar",
@@ -168,7 +193,14 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
     },
     {
       label: "Renomear",
-      onSelect: () => setRenaming(true),
+      onSelect: () => {
+        setRenaming(true);
+        setTimeout(() => {
+          renamingRef.current?.focus();
+          renamingRef.current?.setSelectionRange(0, renamingRef.current.value.length);
+        }, 100);
+        
+      },
       icon: <TbTextSize />,
     },
     {
@@ -216,27 +248,27 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
+                    ref={renamingRef}
                     className="w-full bg-transparent border-none outline-none text-base font-semibold"
                     value={blueprintState?.name}
                     onChange={(e) => setBlueprintState({ ...blueprintState, name: e.target.value })}
-                    onBlur={() => setRenaming(false)}
+                    onBlur={() => {renameBlueprint()}}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        setRenaming(false);
+                        renameBlueprint();
                       }
                     }}
-                    />
-                  <TiTick size={20} className="cursor-pointer" onClick={() => setRenaming(false)} />
+                  />
                 </div>
               ) : (
-                <span className="text-base font-semibold">{blueprintState?.name}</span>
+                <span className="text-base font-semibold whitespace-nowrap overflow-hidden block text-ellipsis">{blueprintState?.name}</span>
               )
             }
             {!!blueprint?.authorId && (
-              <div className="mt-2 flex items-center gap-2">
-                <Image alt="Imagem" src={blueprint?.author?.profileImageUrl ?? ""} className="rounded-full" width={20} height={20} />
+              <div className="flex items-center gap-2">
+                {/* <Image alt="Imagem" src={blueprint?.author?.profileImageUrl ?? ""} className="rounded-full" width={20} height={20} /> */}
                 <p className="text-xs font-medium text-slate-500 ">
-                  por {blueprint.author.fullName} • {dayjs(blueprint.createdAt).fromNow()}
+                  Ultima edição {dayjs(blueprint.updatedAt).fromNow()}
                 </p>
               </div>
             )}

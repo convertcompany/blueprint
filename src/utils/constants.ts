@@ -3,6 +3,7 @@ import type { ToastOptions } from "react-hot-toast";
 const toastOptions : ToastOptions = {
     position : "bottom-right",
     className : "border border-slate antialiased",
+    duration: 2000,
     style : {
         boxShadow : "0 1px 2px 0 rgb(0 0 0 / 0.05)",
         borderRadius: 12,

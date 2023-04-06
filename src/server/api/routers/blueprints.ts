@@ -16,9 +16,9 @@ export const blueprintsRouter = createTRPCRouter({
   getAll: privateProcedure.query(async ({ ctx }) => {
     const blueprints = await ctx.prisma.blueprint.findMany({
       take: 100,
-      // where: {
-      //   authorId: ctx.userId,
-      // },
+      where: {
+        authorId: ctx.userId,
+      },
     });
 
     const users = (
@@ -82,7 +82,16 @@ export const blueprintsRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        name: z.string(),
+        name: z.string().optional(),
+        layout : z.object({}).optional(),
+        externalURL : z.string().optional(),
+        externalId : z.string().optional(),
+        comments : z.object({}).optional(),
+        companyName : z.string().optional(),
+        companyLogo : z.string().optional(),
+        hasOmni : z.boolean().optional(),
+        hasVoice : z.boolean().optional(),
+        hasIntegra : z.boolean().optional()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -90,9 +99,12 @@ export const blueprintsRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-        data: {
-          name: input.name,
-        },
+        data : {
+          ...input,
+          ...{
+            id : input.id,
+          }
+        }
       });
       return blueprint;
     }),
