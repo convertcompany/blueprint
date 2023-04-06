@@ -2,15 +2,17 @@ import type { ReactNode } from "react";
 
 export interface ButtonProps extends React.ComponentPropsWithoutRef<"button">  {
   children?: ReactNode | string
-  isLoading?: Boolean
-  isOutlined?: Boolean
+  isLoading?: boolean
+  isOutlined?: boolean
+  className?: string
 }
 const Button = (props: ButtonProps) => {
-  let { children, className, isLoading, isOutlined, ...all } = props;
+  const { children, isLoading = false, isOutlined = false, ...all } = props;
+  let { className } = props;
   if ( isOutlined ){
-    className = `border border-gray-300 shadow-sm hover:bg-slate-50 active:shadow-none ${className}`;
+    className = `border border-gray-300 shadow-sm hover:bg-slate-50 active:shadow-none ${className ?? ""}`;
   } else {
-    className = `bg-blue-600 text-white hover:bg-blue-500 ${className} shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] `;
+    className = `bg-blue-600 text-white hover:bg-blue-500 ${className ?? ""} shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]`;
   }
   return (
     <button {...all} className={`select-none relative cursor-default rounded-[10px] px-4 py-2 text-center text-sm font-semibold antialiased transition-all outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${className} ${isLoading ? "!text-transparent opacity-70 pointer-events-none" : ""}`}>

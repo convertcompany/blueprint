@@ -1,25 +1,26 @@
-import { SuggestionProps } from "@tiptap/suggestion";
+import type { SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { TbCheckbox, TbCode, TbHeading, TbList, TbListNumbers } from "react-icons/tb";
 
-export default forwardRef((props: SuggestionProps, ref) => {
+/* eslint-disable react/display-name */
+export default forwardRef((props: { items : { label : string, command : ({}) => void, type : string }[], editor : SuggestionProps, range : SuggestionProps}, ref) => {
   const { editor, range } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const selectItem = (index: number) => {
-    const item = props.items[index];
+    const item = props?.items[index];
 
     if (item) {
-      item.command({ editor, range });
+      item?.command({ editor, range });
     }
   };
 
   const upHandler = () => {
-    setSelectedIndex((selectedIndex + props.items.length - 1) % props.items.length);
+    setSelectedIndex((selectedIndex + props.items?.length - 1) % props.items?.length);
   };
 
   const downHandler = () => {
-    setSelectedIndex((selectedIndex + 1) % props.items.length);
+    setSelectedIndex((selectedIndex + 1) % props.items?.length);
   };
 
   const enterHandler = () => {
@@ -51,11 +52,11 @@ export default forwardRef((props: SuggestionProps, ref) => {
 
   return (
     <div className="items">
-      {props.items.length ? (
-        props.items.map((item, index) => (
+      {props.items?.length ? (
+        props.items?.map((item: { label : string, type : string }, index:number) => (
           <button className={`item ${index === selectedIndex ? "is-selected" : ""}`} key={index} onClick={() => selectItem(index)}>
-            <div className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-slate-100 text-slate-400">{item.type === "heading" ? <TbHeading /> : item.type === "todo" ? <TbCheckbox /> : item.type === "ordered" ? <TbListNumbers /> : item.type === "unordered" ? <TbList /> : item.type === "code" ? <TbCode /> : null}</div>
-            {item.label}
+            <div className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-slate-100 text-slate-400">{item?.type === "heading" ? <TbHeading /> : item?.type === "todo" ? <TbCheckbox /> : item?.type === "ordered" ? <TbListNumbers /> : item?.type === "unordered" ? <TbList /> : item?.type === "code" ? <TbCode /> : null}</div>
+            {item?.label}
           </button>
         ))
       ) : (

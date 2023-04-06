@@ -1,68 +1,69 @@
+/* eslint-disable */
 import type { CommandProps, Range } from "@tiptap/react";
 import { ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
 
-import { SuggestionKeyDownProps, SuggestionOptions, SuggestionProps } from "@tiptap/suggestion";
+import type { SuggestionKeyDownProps, SuggestionOptions, SuggestionProps } from "@tiptap/suggestion";
 import CommandList from "./commandList";
 
-export default {
+const commandSuggestion = {
   char: "/",
-  items: ({ query }: SuggestionProps | any) => {
+  items: ({ query }: SuggestionProps|any) => {
     return [
       {
         label: "Titulo 1",
         type: "heading",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
-          editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
+          editor?.chain()?.focus()?.deleteRange(range)?.setNode("heading", { level: 1 })?.run();
         },
       },
       {
         label: "Titulo 2",
         type: "heading",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
-          editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
+          editor?.chain()?.focus()?.deleteRange(range)?.setNode("heading", { level: 2 })?.run();
         },
       },
       {
         label: "Titulo 3",
         type: "heading",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
-          editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
+          editor?.chain()?.focus()?.deleteRange(range)?.setNode("heading", { level: 3 })?.run();
         },
       },
       {
         label: "Tarefas",
         type: "todo",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
-          editor.commands.deleteRange(range);
-          editor.commands.toggleTaskList();
+          editor?.commands?.deleteRange(range);
+          editor?.commands?.toggleTaskList();
         },
       },
       {
         label: "Lista Ordenada",
         type: "ordered",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
-          editor.commands.deleteRange(range);
-          editor.commands.toggleOrderedList();
+          editor?.commands?.deleteRange(range);
+          editor?.commands?.toggleOrderedList();
         },
       },
       {
         label: "Lista Circular",
         type: "unordered",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
-          editor.commands.deleteRange(range);
-          editor.commands.toggleBulletList();
+          editor?.commands?.deleteRange(range);
+          editor?.commands?.toggleBulletList();
         },
       },
       {
         label: "Código",
         type: "code",
         command: ({ editor, range }: { editor: CommandProps; range: Range }) => {
-          editor.commands.deleteRange(range);
-          editor.commands.toggleCodeBlock();
+          editor?.commands?.deleteRange(range);
+          editor?.commands?.toggleCodeBlock();
         },
       },
-    ].filter((item) => item.label.toLowerCase().includes(query.toLowerCase()));
+    ].filter((item:{ label : string, type: string}) => item?.label?.toLowerCase()?.includes(query?.toLowerCase()));
   },
 
   render: () => {
@@ -120,3 +121,5 @@ export default {
     };
   },
 };
+
+export default commandSuggestion;

@@ -24,7 +24,7 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
   const [showComments, setShowComments] = useState(false);
   const { data, isLoading } = api.blueprints.getBlueprintById.useQuery({ id });
 
-  const ctx = api.useContext();
+  // const ctx = api.useContext();
 
   const { mutate:updateMutate, isLoading:isSaving } = api.blueprints.update.useMutation({
     onSuccess: () => {
@@ -39,7 +39,6 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
   });
 
   const saveBlueprint = () => {
-    console.log("ENTREI")
     toast.loading("Salvando...");
     if ( !data ) return;
     updateMutate({ id: data.id, name: data.name });
@@ -48,7 +47,7 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
   return (
     <>
       <Head>
-        <title>{ isLoading ? "Carregando..." : `Editando | ${data?.name}` }</title>
+        <title>{ isLoading ? "Carregando..." : `Editando | ${data?.name ?? ""}` }</title>
       </Head>
       <Toaster toastOptions={toastOptions} containerStyle={toastContainerStyle}/>
       <main className="flex h-screen max-h-screen flex-col overflow-hidden">

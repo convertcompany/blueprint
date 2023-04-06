@@ -8,12 +8,13 @@ import { IoMdAddCircle } from "react-icons/io";
 dayjs.locale("pt-br");
 dayjs.extend(relativeTime);
 
-import { Blueprint } from "@prisma/client";
+import type { Blueprint } from "@prisma/client";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
-import toast, { Toast, Toaster } from "react-hot-toast";
+import type { Toast } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { TbEdit, TbLink, TbTextSize, TbTrash } from "react-icons/tb";
 import { TiWarning } from "react-icons/ti";
 import Button from "~/components/button";
@@ -176,7 +177,9 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
   /** Função para gerar link do blueprint */
   const shareBlueprint = () => {
     const url = `${window.location.origin}/blueprint/${blueprint.id}`;
-    navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(url).catch(err => {
+      toast.error("Erro ao copiar link");
+    });
     toast.success("Link copiado para o clipboard");
   };
 

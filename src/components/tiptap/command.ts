@@ -9,8 +9,8 @@ export default Extension.create({
     return {
       suggestion: {
         char: "/",
-        command: ({ editor, range, props }: SuggestionProps | any) => {
-          props.command({ editor, range });
+        command: ({ editor, range, props }: { props : { command : ({  }) => void }, editor : SuggestionProps, range : SuggestionProps}) => {
+          props?.command({ editor, range });
         },
       },
     };
@@ -18,9 +18,11 @@ export default Extension.create({
 
   addProseMirrorPlugins() {
     return [
+      //eslint-disable-next-line @typescript-eslint/no-unsafe-argument 
       Suggestion({
         editor: this.editor,
-        ...this.options.suggestion,
+        //eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        ...this?.options?.suggestion,
       }),
     ];
   },
