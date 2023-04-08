@@ -106,8 +106,11 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
               <TbSettings size={18} /> Ajustes do Projeto
             </span>
             <h3 className="font-semibold">Untitled</h3>
-            <Input label="Gabriel" placeholder="Ex : Gabriel" className="my-2" />
-            <Input label="Gabriel" placeholder="Ex : Gabriel" className="my-2" />
+            <div className="flex items-end gap-2">
+              <Input label="Gabriel" placeholder="Ex : Gabriel" className="grow" />
+              <Button>Gabriel</Button>
+            </div>
+            <Input label="Senha" placeholder="Ex : Gabriel" className="my-2" type="password" />
           </Dialog>
           {/* Comentários do Projeto */}
           <AnimatePresence>

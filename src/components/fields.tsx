@@ -29,8 +29,8 @@ const Input = (props: InputProps) => {
   };
   return (
     <div className={className}>
-      {!!label && <label className="block text-sm font-medium leading-6 text-gray-900">{label}</label>}
-      <input className={`w-full rounded-lg border border-gray-300 bg-white p-2 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600`} onKeyDown={handleKeyDown} onChange={handleChange} {...all} />
+      {!!label && <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">{label}</label>}
+      <input className={` h-[38px] w-full rounded-lg border border-gray-300 p-2 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600 dark:border-gray-400/20 dark:bg-gray-400/20 dark:focus:ring-sky-500`} onKeyDown={handleKeyDown} onChange={handleChange} {...all} />
     </div>
   );
 };

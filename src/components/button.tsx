@@ -10,16 +10,16 @@ const Button = (props: ButtonProps) => {
   const { children, isLoading = false, isOutlined = false, ...all } = props;
   let { className } = props;
   if (isOutlined) {
-    className = `border border-gray-300 shadow-sm hover:bg-gray-50 active:shadow-none ${className ?? ""}`;
+    className = `border border-gray-300 shadow-sm hover:bg-gray-50 active:shadow-none dark:focus-visible:border-transparent ${className ?? ""}`;
   } else {
     if (className?.includes("bg-")) {
       className = `${className ?? ""} shadow-[inset_0_1.5px_0_rgba(255,255,255,0.2)]`;
     } else {
-      className = `${className ?? ""} bg-slate-900 hover:bg-slate-700 text-white shadow-[inset_0_1.5px_0_rgba(255,255,255,0.2)]`;
+      className = `${className ?? ""} bg-slate-900 hover:bg-slate-700 dark:bg-slate-400/20 dark:hover:bg-slate-400/30 dark:shadow-[inset_0_1.5px_0_rgba(255,255,255,0.1)] text-white shadow-[inset_0_1.5px_0_rgba(255,255,255,0.2)]`;
     }
   }
   return (
-    <button {...all} className={`relative cursor-default select-none rounded-[8.5px] px-4 py-2 text-center text-sm font-semibold antialiased outline-none transition-all focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${className} ${isLoading ? "pointer-events-none !text-transparent opacity-70" : ""}`}>
+    <button {...all} className={`relative h-[38px] cursor-default select-none rounded-[8.5px] px-4 py-2 text-center text-sm font-semibold antialiased outline-none transition-all focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-sky-500 ${className} ${isLoading ? "pointer-events-none !text-transparent opacity-70" : ""}`}>
       {children}
       {isLoading && (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
