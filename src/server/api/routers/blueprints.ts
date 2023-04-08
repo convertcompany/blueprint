@@ -103,6 +103,7 @@ export const blueprintsRouter = createTRPCRouter({
         hasOmni: z.boolean().optional(),
         hasVoice: z.boolean().optional(),
         hasIntegra: z.boolean().optional(),
+        allowedUsers: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

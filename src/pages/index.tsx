@@ -19,7 +19,6 @@ import { TbEdit, TbLink, TbTextSize, TbTrash } from "react-icons/tb";
 import { TiWarning } from "react-icons/ti";
 import Button from "~/components/button";
 import ContextMenu from "~/components/contextMenu";
-import { Dialog } from "~/components/dialog";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { toastContainerStyle, toastOptions } from "~/utils/constants";
@@ -55,27 +54,7 @@ const Home: NextPage = () => {
         <meta name="description" content="Blueprint" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Dialog>
-        <div className="flex flex-col antialiased">
-          <h3 className="text-xl font-semibold">Compartilhar projeto</h3>
-          <span className="mb-6 text-sm text-gray-400">Por favor, informe o email de cada usuário com o que você deseja compartilhar o projeto</span>
-          <label className="mb-1 text-sm font-semibold">Convidar usuários</label>
-          <div className="flex items-stretch gap-2">
-            <input type="text" className="grow rounded-lg border border-gray-300 p-2 text-sm shadow-sm outline-none focus:bg-white" placeholder="Ex : convert@convertcompany.com.br" />
-            <Button>Adicionar</Button>
-          </div>
-          <div className="mt-8">
-            <label className="block text-sm font-medium">Compartilhado com</label>
-            <div className="mt-2 flex flex-col gap-2">
-              <div className="flex grow select-none items-center rounded-lg border border-gray-300 p-2 text-sm shadow-sm">
-                <div className="mr-2 grid h-6 w-6 place-items-center rounded-full bg-blue-600  font-bold text-white">G</div>
-                <label className="grow">gabriel@convertcompany.com.br</label>
-                <label className="rounded-md p-1 text-xs text-gray-400 hover:bg-rose-600/10 hover:text-rose-600">Remover</label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Dialog>
+
       <Toaster toastOptions={toastOptions} containerStyle={toastContainerStyle} />
       <main className="flex h-screen w-screen flex-col">
         <nav className="box-border flex h-16 items-center gap-6 border-b p-8 py-4 antialiased shadow-sm">

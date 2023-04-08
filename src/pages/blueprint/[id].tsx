@@ -1,3 +1,4 @@
+import type { Blueprint } from "@prisma/client";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { AnimatePresence, motion } from "framer-motion";
 import type { GetStaticProps, NextPage } from "next";
@@ -13,20 +14,20 @@ import { TbMessage } from "react-icons/tb";
 import superjson from "superjson";
 import BlueprintEditor from "~/components/blueprintEditor";
 import Button from "~/components/button";
+import { Dialog } from "~/components/dialog";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
-import { api } from "~/utils/api";
+import { RouterOutputs, api } from "~/utils/api";
 import { toastContainerStyle, toastOptions } from "~/utils/constants";
 
 const BlueprintComments = dynamic(() => import("~/components/blueprintComments"), { ssr: false });
 
+type BlueprintType = RouterOutputs["blueprints"]["getAll"][number];
 /** Pagina aonde o usuário edita o blueprint */
 const Blueprint: NextPage<{ id: string }> = ({ id }) => {
   const [showComments, setShowComments] = useState(false);
   const { data, isLoading } = api.blueprints.getBlueprintById.useQuery({ id });
-  const original = structuredClone(data);
-
-  // const ctx = api.useContext();
+  const [openShare, setOpenShare] = useState(false);
 
   const { mutate: updateMutate, isLoading: isSaving } = api.blueprints.update.useMutation({
     onSuccess: () => {
@@ -51,6 +52,7 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
       <Head>
         <title>{isLoading ? "Carregando..." : `Editando | ${data?.name ?? ""}`}</title>
       </Head>
+      <ShareDialog open={openShare} openChange={setOpenShare} blueprintData={data ?? null} />
       <Toaster toastOptions={toastOptions} containerStyle={toastContainerStyle} />
       <main className="flex h-screen max-h-screen flex-col overflow-hidden">
         {/* Barra de Navegação do Projeto */}
@@ -63,7 +65,9 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
               <span className="text-base font-bold">{data?.name}</span>
             </div>
             <div className="flex gap-2">
-              <Button isOutlined={true}>Compartilhar</Button>
+              <Button isOutlined={true} onClick={() => setOpenShare(true)}>
+                Compartilhar
+              </Button>
               <Button isOutlined={true} className={showComments ? "border-transparent bg-slate-900 text-white hover:bg-slate-900" : ""} onClick={() => setShowComments(!showComments)}>
                 <TbMessage size={18} />
               </Button>
@@ -94,13 +98,104 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
                     <CgClose />
                   </div>
                 </div>
-                <BlueprintComments />
+                <BlueprintComments value={null} />
               </motion.div>
             )}
           </AnimatePresence>
         </div>
       </main>
     </>
+  );
+};
+
+const ShareDialog = ({ open, openChange, blueprintData }: { open: boolean; openChange: (open: boolean) => void; blueprintData: BlueprintType | null }) => {
+  const [emailInput, setEmailInput] = useState("");
+  const ctx = api.useContext();
+
+  const { mutate: addEmailMutate, isLoading: isAdding } = api.blueprints.update.useMutation({
+    onSuccess: () => {
+      toast.remove();
+      toast.success("Usuário adicionado!");
+      void ctx.blueprints.getBlueprintById.invalidate();
+    },
+    onError: () => {
+      toast.remove();
+      toast.error("Erro ao adicionar usuário");
+    },
+  });
+
+  const { mutate: removeEmailMutate } = api.blueprints.update.useMutation({
+    onSuccess: () => {
+      toast.remove();
+      toast.success("Usuário removido!");
+      void ctx.blueprints.getBlueprintById.invalidate();
+    },
+    onError: () => {
+      toast.remove();
+      toast.error("Erro ao remover usuário");
+    },
+  });
+
+  const addEmail = () => {
+    if (!blueprintData) return;
+    const allowed = blueprintData.allowedUsers.split(",") ?? [];
+    if (!emailInput) {
+      toast.error("Preencha todos os campos");
+      return;
+    }
+    if (!emailInput.includes("@")) {
+      toast.error("Email inválido");
+      return;
+    }
+    if (allowed.includes(emailInput)) {
+      toast.error("Usuário já está na lista de compartilhamento");
+      return;
+    }
+    allowed.push(emailInput);
+    addEmailMutate({ id: blueprintData.id, allowedUsers: allowed.filter((email) => email).join(",") });
+    setEmailInput("");
+  };
+
+  const removeEmail = (em: string) => {
+    if (!blueprintData) return;
+    toast.loading("Removendo usuário...");
+    const allowed = blueprintData.allowedUsers.split(",") ?? [];
+    allowed.splice(allowed.indexOf(em), 1);
+    removeEmailMutate({ id: blueprintData.id, allowedUsers: allowed.filter((email) => email).join(",") });
+  };
+
+  return (
+    <Dialog open={open} openChange={openChange}>
+      <div className="flex flex-col antialiased">
+        <h3 className="text-xl font-semibold">Compartilhar projeto</h3>
+        <span className="mb-6 text-sm text-gray-400">Por favor, informe o email de cada usuário com o que você deseja compartilhar o projeto</span>
+        <label className="mb-1 text-sm font-semibold">Convidar usuários</label>
+        <div className="flex items-stretch gap-2">
+          <input type="text" value={emailInput} onKeyDown={(e) => (e.key === "Enter" ? addEmail() : null)} onChange={(e) => setEmailInput(e.target.value)} className="grow rounded-lg border border-gray-300 p-2 text-sm shadow-sm outline-none focus:bg-white" placeholder="Ex : convert@convertcompany.com.br" />
+          <Button onClick={addEmail} isLoading={isAdding}>
+            Adicionar
+          </Button>
+        </div>
+        {blueprintData && blueprintData?.allowedUsers?.replace(/\s/g, "")?.length > 0 ? (
+          <div className="mb-3 mt-8">
+            <div>
+              <label className="block text-sm font-medium">Compartilhado com</label>
+              <div className="mt-2 flex flex-col gap-2">
+                {blueprintData?.allowedUsers?.split(",")?.map((email, index) => (
+                  <div className="flex grow select-none items-center rounded-lg border border-gray-300 p-2 text-sm shadow-sm" key={index}>
+                    <div className="mr-2 grid h-6 w-6 place-items-center rounded-full bg-blue-600  font-bold text-white">{email.substring(0, 1).toUpperCase()}</div>
+                    <label className="grow">{email}</label>
+                    <label className="rounded-md p-1 px-2 text-xs text-gray-400 hover:bg-rose-600/10 hover:text-rose-600" onClick={() => removeEmail(email)}>
+                      Remover
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </Dialog>
   );
 };
 
