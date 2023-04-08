@@ -56,14 +56,21 @@ export const blueprintsRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      const blueprint = await ctx.prisma.blueprint.findUnique({
+      const user = await clerkClient.users.getUser(ctx?.userId);
+      const blueprint = await ctx.prisma.blueprint.findFirst({
         where: {
           id: input.id,
         },
       });
 
       if (!blueprint) {
-        throw new Error("Blueprint not found");
+        throw new Error("Blueprint não encontrado");
+      } else {
+        if (ctx?.userId !== blueprint.authorId) {
+          if (!user?.emailAddresses[0]?.emailAddress || !blueprint.allowedUsers.includes(user?.emailAddresses[0]?.emailAddress)) {
+            throw new Error("Você não tem permissão para acessar esse blueprint");
+          }
+        }
       }
       const author = await clerkClient.users.getUser(blueprint.authorId);
       return {

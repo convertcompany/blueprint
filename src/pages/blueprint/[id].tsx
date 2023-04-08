@@ -15,6 +15,8 @@ import superjson from "superjson";
 import BlueprintEditor from "~/components/blueprintEditor";
 import Button from "~/components/button";
 import { Dialog } from "~/components/dialog";
+import { ErrorView } from "~/components/errors";
+import { LoadingPage } from "~/components/loading";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { RouterOutputs, api } from "~/utils/api";
@@ -26,14 +28,21 @@ type BlueprintType = RouterOutputs["blueprints"]["getAll"][number];
 /** Pagina aonde o usuário edita o blueprint */
 const Blueprint: NextPage<{ id: string }> = ({ id }) => {
   const [showComments, setShowComments] = useState(false);
-  const { data, isLoading } = api.blueprints.getBlueprintById.useQuery({ id });
+  // disable query after error
+  const { data, isLoading, isError, error } = api.blueprints.getBlueprintById.useQuery(
+    { id },
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      retry: false,
+    }
+  );
   const [openShare, setOpenShare] = useState(false);
 
   const { mutate: updateMutate, isLoading: isSaving } = api.blueprints.update.useMutation({
     onSuccess: () => {
       toast.remove();
       toast.success("Projeto salvo!");
-      // void ctx.blueprints.getAll.invalidate();
     },
     onError: () => {
       toast.remove();
@@ -47,6 +56,10 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
     updateMutate({ id: data.id, name: data.name });
   };
 
+  if (isLoading) return <LoadingPage title="Buscando Blueprint" />;
+
+  if (isError) return <ErrorView title="Erro ao buscar Blueprint" message={error?.message} buttonText="Voltar a tela inicial"></ErrorView>;
+
   return (
     <>
       <Head>
@@ -54,7 +67,7 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
       </Head>
       <ShareDialog open={openShare} openChange={setOpenShare} blueprintData={data ?? null} />
       <Toaster toastOptions={toastOptions} containerStyle={toastContainerStyle} />
-      <main className="flex h-screen max-h-screen flex-col overflow-hidden">
+      <main className="flex h-screen max-h-screen flex-col overflow-hidden bg-gray-50">
         {/* Barra de Navegação do Projeto */}
         <nav className="box-border flex h-16 items-center gap-6 border-b p-8 py-4 antialiased shadow-sm">
           <div className="flex grow flex-row items-center gap-4">
