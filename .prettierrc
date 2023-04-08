@@ -1,7 +1,7 @@
 {
-    "plugins": [
-      "prettier-plugin-tailwindcss"
-    ],
-    "pluginSearchDirs": false,
-    "printWidth": 18000
-  }
+  "plugins": [
+    "prettier-plugin-tailwindcss"
+  ],
+  "pluginSearchDirs": false,
+  "printWidth": 1800000
+}

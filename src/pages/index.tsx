@@ -19,6 +19,7 @@ import { TbEdit, TbLink, TbTextSize, TbTrash } from "react-icons/tb";
 import { TiWarning } from "react-icons/ti";
 import Button from "~/components/button";
 import ContextMenu from "~/components/contextMenu";
+import { Dialog } from "~/components/dialog";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { toastContainerStyle, toastOptions } from "~/utils/constants";
@@ -31,13 +32,13 @@ const Home: NextPage = () => {
   const { mutate, isLoading: isCreating } = api.blueprints.create.useMutation({
     onSuccess: (blueprint: Blueprint) => {
       toast.remove();
-      toast.success("Projeto criado com sucesso!")
+      toast.success("Projeto criado com sucesso!");
       window.location.href = `/blueprint/${blueprint.id}`;
     },
     onError: () => {
       toast.remove();
       toast.error("Ocorreu um erro ao criar o projeto!");
-    }
+    },
   });
 
   const createBlueprint = () => {
@@ -54,9 +55,30 @@ const Home: NextPage = () => {
         <meta name="description" content="Blueprint" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Toaster toastOptions={toastOptions} containerStyle={toastContainerStyle}/>
+      <Dialog>
+        <div className="flex flex-col antialiased">
+          <h3 className="text-xl font-semibold">Compartilhar projeto</h3>
+          <span className="mb-6 text-sm text-gray-400">Por favor, informe o email de cada usuário com o que você deseja compartilhar o projeto</span>
+          <label className="mb-1 text-sm font-semibold">Convidar usuários</label>
+          <div className="flex items-stretch gap-2">
+            <input type="text" className="grow rounded-lg border border-gray-300 p-2 text-sm shadow-sm outline-none focus:bg-white" placeholder="Ex : convert@convertcompany.com.br" />
+            <Button>Adicionar</Button>
+          </div>
+          <div className="mt-8">
+            <label className="block text-sm font-medium">Compartilhado com</label>
+            <div className="mt-2 flex flex-col gap-2">
+              <div className="flex grow select-none items-center rounded-lg border border-gray-300 p-2 text-sm shadow-sm">
+                <div className="mr-2 grid h-6 w-6 place-items-center rounded-full bg-blue-600  font-bold text-white">G</div>
+                <label className="grow">gabriel@convertcompany.com.br</label>
+                <label className="rounded-md p-1 text-xs text-gray-400 hover:bg-rose-600/10 hover:text-rose-600">Remover</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Dialog>
+      <Toaster toastOptions={toastOptions} containerStyle={toastContainerStyle} />
       <main className="flex h-screen w-screen flex-col">
-        <nav className="flex items-center gap-6 border-b p-8 py-4 antialiased shadow-sm h-16 box-border">
+        <nav className="box-border flex h-16 items-center gap-6 border-b p-8 py-4 antialiased shadow-sm">
           <div className="grow">
             <Image alt="Blueprint" src="/logos/light.svg" width={120} height={25} />
           </div>
@@ -85,7 +107,7 @@ const Home: NextPage = () => {
               <>
                 {data?.length === 0 ? (
                   <AnimatePresence>
-                    <motion.div className="flex grow flex-col items-center justify-center" key={"container-empty"} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} >
+                    <motion.div className="flex grow flex-col items-center justify-center" key={"container-empty"} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                       <Image alt="Icone" width={60} height={60} src={"/logos/icon.svg"} className="mb-6 grayscale" />
                       <h2 className="text-2xl font-semibold">Nenhum Blueprint encontrado</h2>
                       <p className="mb-8 text-sm text-slate-500">Clique no botão abaixo para criar um novo projeto</p>
@@ -96,15 +118,15 @@ const Home: NextPage = () => {
                   </AnimatePresence>
                 ) : (
                   <AnimatePresence>
-                    <motion.div className="flex flex-col gap-6" key={"container-blueprints"} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, height: 0 }} >
+                    <motion.div className="flex flex-col gap-6" key={"container-blueprints"} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, height: 0 }}>
                       <CreateBlueprintButton createBlueprint={createBlueprint} isCreating={isCreating} />
                       <div className="grid grid-cols-1 gap-6 transition-all sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                         {data?.map((blueprint: BlueprintProps) => (
                           <BlueprintCard {...blueprint} key={blueprint?.id} />
-                          ))}
+                        ))}
                       </div>
                     </motion.div>
-                </AnimatePresence>
+                  </AnimatePresence>
                 )}
               </>
             )}
@@ -137,20 +159,22 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
   const { id } = blueprint;
   const ctx = api.useContext();
 
-  const { mutate:deleteMutate } = api.blueprints.delete.useMutation({
+  const { mutate: deleteMutate } = api.blueprints.delete.useMutation({
     onSuccess: () => {
       toast.remove();
       void ctx.blueprints.getAll.invalidate();
       toast.success("Projeto deletado com sucesso");
-      setTimeout(() => { toast.dismiss()}, 2000) // tenho que fazer por aqui senao ele nao some
+      setTimeout(() => {
+        toast.dismiss();
+      }, 2000); // tenho que fazer por aqui senao ele nao some
     },
     onError: () => {
       toast.remove();
       toast.error("Erro ao deletar projeto");
     },
   });
-  
-  const { mutate:editMutate } = api.blueprints.update.useMutation({
+
+  const { mutate: editMutate } = api.blueprints.update.useMutation({
     onSuccess: () => {
       toast.remove();
       toast.success("Projeto salvo!");
@@ -177,7 +201,7 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
   /** Função para gerar link do blueprint */
   const shareBlueprint = () => {
     const url = `${window.location.origin}/blueprint/${blueprint.id}`;
-    navigator.clipboard.writeText(url).catch(err => {
+    navigator.clipboard.writeText(url).catch((err) => {
       toast.error("Erro ao copiar link");
     });
     toast.success("Link copiado para o clipboard");
@@ -187,11 +211,11 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
   const renameBlueprint = () => {
     setRenaming(false);
     if (blueprintState.name === blueprint.name) return;
-    if ( blueprintState.name === "" ){
+    if (blueprintState.name === "") {
       setBlueprintState(blueprint);
       return;
     }
-    editMutate({ id : blueprint.id, name : blueprintState.name });
+    editMutate({ id: blueprint.id, name: blueprintState.name });
   };
 
   const contextMenuItems = [
@@ -208,7 +232,6 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
           renamingRef.current?.focus();
           renamingRef.current?.setSelectionRange(0, renamingRef.current.value.length);
         }, 100);
-        
       },
       icon: <TbTextSize />,
     },
@@ -220,27 +243,37 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
     {
       label: "Deletar",
       onSelect: () => {
-        toast((t:Toast) => {
-          return (
-            <div className="flex items-center gap-3 ml-2">
-              <span>
-                Você tem certeza que deseja deletar esse projeto?
-              </span>
-              <Button className="bg-slate-700 hover:bg-slate-600" onClick={() => toast.dismiss(t.id)} > Não </Button>
-              <Button className="bg-rose-500 hover:bg-rose-600" onClick={() => {
-                toast.dismiss(t.id);
-                deleteBlueprint();
-              }} > Sim </Button>
-            </div>
-          )
-        }, {
-          icon: <TiWarning size={28} color="#FCD34E"/>,
-          style : { 
-            maxWidth : "500px",
+        toast(
+          (t: Toast) => {
+            return (
+              <div className="ml-2 flex items-center gap-3">
+                <span>Você tem certeza que deseja deletar esse projeto?</span>
+                <Button className="bg-slate-700 hover:bg-slate-600" onClick={() => toast.dismiss(t.id)}>
+                  {" "}
+                  Não{" "}
+                </Button>
+                <Button
+                  className="bg-rose-500 hover:bg-rose-600"
+                  onClick={() => {
+                    toast.dismiss(t.id);
+                    deleteBlueprint();
+                  }}
+                >
+                  {" "}
+                  Sim{" "}
+                </Button>
+              </div>
+            );
           },
-          position: "bottom-center",
-          duration : Infinity
-        });
+          {
+            icon: <TiWarning size={28} color="#FCD34E" />,
+            style: {
+              maxWidth: "500px",
+            },
+            position: "bottom-center",
+            duration: Infinity,
+          }
+        );
       },
       icon: <TbTrash />,
     },
@@ -249,36 +282,34 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
   return (
     <ContextMenu items={contextMenuItems}>
       <Link href={renaming ? `` : `/blueprint/${blueprint.id}`} className="cursor-default" tabIndex={-1}>
-        <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm  transition-all hover:shadow-sm outline-none ring-blue-500 ring-offset-2 focus-visible:ring-2" tabIndex={0}>
+        <div className="relative select-none overflow-hidden rounded-2xl border border-slate-200 bg-white antialiased shadow-sm  outline-none ring-blue-500 ring-offset-2 transition-all hover:shadow-sm focus-visible:ring-2" tabIndex={0}>
           <Image src={"/teste.png"} width={1000} height={80} alt={"teste"} />
           <div className="border-t p-3 pt-2">
-            {
-              renaming ? (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    ref={renamingRef}
-                    className="w-full bg-transparent border-none outline-none text-base font-semibold"
-                    value={blueprintState?.name}
-                    onChange={(e) => setBlueprintState({ ...blueprintState, name: e.target.value })}
-                    onBlur={() => {renameBlueprint()}}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        renameBlueprint();
-                      }
-                    }}
-                  />
-                </div>
-              ) : (
-                <span className="text-base font-semibold whitespace-nowrap overflow-hidden block text-ellipsis">{blueprintState?.name}</span>
-              )
-            }
+            {renaming ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  ref={renamingRef}
+                  className="w-full border-none bg-transparent text-base font-semibold outline-none"
+                  value={blueprintState?.name}
+                  onChange={(e) => setBlueprintState({ ...blueprintState, name: e.target.value })}
+                  onBlur={() => {
+                    renameBlueprint();
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      renameBlueprint();
+                    }
+                  }}
+                />
+              </div>
+            ) : (
+              <span className="block overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold">{blueprintState?.name}</span>
+            )}
             {!!blueprint?.authorId && (
               <div className="flex items-center gap-2">
                 {/* <Image alt="Imagem" src={blueprint?.author?.profileImageUrl ?? ""} className="rounded-full" width={20} height={20} /> */}
-                <p className="text-xs font-medium text-slate-500 ">
-                  Ultima edição {dayjs(blueprint.updatedAt).fromNow()}
-                </p>
+                <p className="text-xs font-medium text-slate-500 ">Ultima edição {dayjs(blueprint.updatedAt).fromNow()}</p>
               </div>
             )}
           </div>
