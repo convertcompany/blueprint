@@ -10,12 +10,13 @@ import Link from "next/link";
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { CgArrowsExpandRight, CgClose, CgComment } from "react-icons/cg";
-import { TbMessage } from "react-icons/tb";
+import { TbMessage, TbSettings } from "react-icons/tb";
 import superjson from "superjson";
 import BlueprintEditor from "~/components/blueprintEditor";
 import Button from "~/components/button";
 import { Dialog } from "~/components/dialog";
 import { ErrorView } from "~/components/errors";
+import { Input } from "~/components/fields";
 import { LoadingPage } from "~/components/loading";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
@@ -56,7 +57,7 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
     updateMutate({ id: data.id, name: data.name });
   };
 
-  if (isLoading) return <LoadingPage title="Buscando Blueprint" />;
+  if (isLoading) return <LoadingPage title="Carregando Blueprint" />;
 
   if (isError) return <ErrorView title="Erro ao buscar Blueprint" message={error?.message} buttonText="Voltar a tela inicial"></ErrorView>;
 
@@ -81,6 +82,9 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
               <Button isOutlined={true} onClick={() => setOpenShare(true)}>
                 Compartilhar
               </Button>
+              <Button isOutlined={true} onClick={() => setShowComments(!showComments)}>
+                <TbSettings size={18} />
+              </Button>
               <Button isOutlined={true} className={showComments ? "border-transparent bg-slate-900 text-white hover:bg-slate-900" : ""} onClick={() => setShowComments(!showComments)}>
                 <TbMessage size={18} />
               </Button>
@@ -96,11 +100,20 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
           <div className="flex grow flex-col border-r">
             <BlueprintEditor />
           </div>
+          {/* Ajustes do Projeto */}
+          <Dialog open={true} openChange={() => true}>
+            <span className="mb-2 flex grow items-center gap-2 text-xs text-gray-500">
+              <TbSettings size={18} /> Ajustes do Projeto
+            </span>
+            <h3 className="font-semibold">Untitled</h3>
+            <Input label="Gabriel" placeholder="Ex : Gabriel" className="my-2" />
+            <Input label="Gabriel" placeholder="Ex : Gabriel" className="my-2" />
+          </Dialog>
           {/* Comentários do Projeto */}
           <AnimatePresence>
             {showComments && (
-              <motion.div initial={{ width: 0, opacity: 0 }} transition={{ type: "spring" }} animate={{ width: 400, opacity: 1 }} exit={{ width: 0, opacity: 0 }} className="flex max-h-screen w-[400px] flex-col shadow-xl">
-                <div className="flex items-center px-6 pt-4 text-slate-400">
+              <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: 400, opacity: 1 }} exit={{ width: 0, opacity: 0 }} className="flex max-h-screen w-[400px] flex-col shadow-xl">
+                <div className="flex items-center whitespace-nowrap px-6 pt-4 text-slate-400">
                   <span className="flex grow items-center gap-2 text-xs">
                     <CgComment /> Comentários sobre o Projeto
                   </span>
@@ -129,6 +142,7 @@ const ShareDialog = ({ open, openChange, blueprintData }: { open: boolean; openC
     onSuccess: () => {
       toast.remove();
       toast.success("Usuário adicionado!");
+      setTimeout(() => toast.dismiss(), 2000);
       void ctx.blueprints.getBlueprintById.invalidate();
     },
     onError: () => {
@@ -141,6 +155,7 @@ const ShareDialog = ({ open, openChange, blueprintData }: { open: boolean; openC
     onSuccess: () => {
       toast.remove();
       toast.success("Usuário removido!");
+      setTimeout(() => toast.dismiss(), 2000);
       void ctx.blueprints.getBlueprintById.invalidate();
     },
     onError: () => {
@@ -194,15 +209,17 @@ const ShareDialog = ({ open, openChange, blueprintData }: { open: boolean; openC
             <div>
               <label className="block text-sm font-medium">Compartilhado com</label>
               <div className="mt-2 flex flex-col gap-2">
-                {blueprintData?.allowedUsers?.split(",")?.map((email, index) => (
-                  <div className="flex grow select-none items-center rounded-lg border border-gray-300 p-2 text-sm shadow-sm" key={index}>
-                    <div className="mr-2 grid h-6 w-6 place-items-center rounded-full bg-blue-600  font-bold text-white">{email.substring(0, 1).toUpperCase()}</div>
-                    <label className="grow">{email}</label>
-                    <label className="rounded-md p-1 px-2 text-xs text-gray-400 hover:bg-rose-600/10 hover:text-rose-600" onClick={() => removeEmail(email)}>
-                      Remover
-                    </label>
-                  </div>
-                ))}
+                <AnimatePresence>
+                  {blueprintData?.allowedUsers?.split(",")?.map((email, index) => (
+                    <motion.div className="flex grow select-none items-center rounded-lg border border-gray-300 p-2 text-sm shadow-sm" key={index} initial={{ translateY: 10 }} animate={{ translateY: 0 }} exit={{ translateY: 10 }}>
+                      <div className="mr-2 grid h-6 w-6 place-items-center rounded-full bg-blue-600  font-bold text-white">{email.substring(0, 1).toUpperCase()}</div>
+                      <label className="grow">{email}</label>
+                      <label className="rounded-md p-1 px-2 text-xs text-gray-400 hover:bg-rose-600/10 hover:text-rose-600" onClick={() => removeEmail(email)}>
+                        Remover
+                      </label>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
             </div>
           </div>

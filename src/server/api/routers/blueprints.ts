@@ -68,7 +68,7 @@ export const blueprintsRouter = createTRPCRouter({
       } else {
         if (ctx?.userId !== blueprint.authorId) {
           if (!user?.emailAddresses[0]?.emailAddress || !blueprint.allowedUsers.includes(user?.emailAddresses[0]?.emailAddress)) {
-            throw new Error("Você não tem permissão para acessar esse blueprint");
+            throw new Error("Você não tem permissão para acessar esse Blueprint");
           }
         }
       }
@@ -111,6 +111,7 @@ export const blueprintsRouter = createTRPCRouter({
         hasVoice: z.boolean().optional(),
         hasIntegra: z.boolean().optional(),
         allowedUsers: z.string().optional(),
+        layoutPreview: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

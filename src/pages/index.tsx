@@ -215,8 +215,7 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
               <div className="ml-2 flex items-center gap-3">
                 <span>Você tem certeza que deseja deletar esse projeto?</span>
                 <Button className="bg-slate-700 hover:bg-slate-600" onClick={() => toast.dismiss(t.id)}>
-                  {" "}
-                  Não{" "}
+                  Não
                 </Button>
                 <Button
                   className="bg-rose-500 hover:bg-rose-600"
@@ -225,8 +224,7 @@ const BlueprintCard = (blueprint: BlueprintProps) => {
                     deleteBlueprint();
                   }}
                 >
-                  {" "}
-                  Sim{" "}
+                  Sim
                 </Button>
               </div>
             );
