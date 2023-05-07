@@ -82,9 +82,7 @@ const Home: NextPage = () => {
                 <Image alt="Icone" width={60} height={60} src={"/logos/icon.svg"} className="mb-6 grayscale" />
                 <h2 className="text-2xl font-semibold">Nenhum Blueprint encontrado</h2>
                 <p className="mb-8 text-sm text-slate-500">Clique no botão abaixo para criar um novo projeto</p>
-                <Button className="bg-slate-950" onClick={createBlueprint}>
-                  Criar novo projeto
-                </Button>
+                <Button onClick={createBlueprint}>Criar novo projeto</Button>
               </motion.div>
             ) : (
               <motion.div className="flex flex-col gap-6" key={"container-blueprints"} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, height: 0 }}>

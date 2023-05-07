@@ -101,7 +101,7 @@ const Blueprint: NextPage<{ id: string }> = ({ id }) => {
             <BlueprintEditor />
           </div>
           {/* Ajustes do Projeto */}
-          <Dialog open={true} openChange={() => true}>
+          <Dialog open={false} openChange={() => true}>
             <span className="mb-2 flex grow items-center gap-2 text-xs text-gray-500">
               <TbSettings size={18} /> Ajustes do Projeto
             </span>
